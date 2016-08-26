@@ -1,6 +1,6 @@
 'use strict';
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['ngRoute',
+angular.module('myApp', ['ngRoute', 'ymaps',
   'myApp.filters', 'myApp.services', 'myApp.directives']).
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider.
@@ -8,14 +8,22 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
     templateUrl: 'partials/index',
     controller: IndexCtrl
   }).
+  when('/readDocument/:id', {
+    templateUrl: 'partials/readDocument',
+    controller: ReadDocumentCtrl
+  }).
+  when('/editDocument/:id', {
+    templateUrl: 'partials/editDocument',
+    controller: EditDocumentCtrl
+  }).
   when('/addPost', {
     templateUrl: 'partials/addPost',
     controller: AddPostCtrl
   }).
-  when('/readPost/:id', {
-    templateUrl: 'partials/readPost',
-    controller: ReadPostCtrl
-  }).
+  // when('/readPost/:id', {
+  //   templateUrl: 'partials/readPost',
+  //   controller: ReadPostCtrl
+  // }).
   when('/editPost/:id', {
     templateUrl: 'partials/editPost',
     controller: EditPostCtrl

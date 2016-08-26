@@ -45,12 +45,19 @@
 
 // JSON API
 
-  app.get('/api/posts', api.posts);
+  app.get('/api/documents', api.documents);
+  app.get('/api/document/:id', api.document);
+  // app.post('/api/document', api.addDocument);
+  app.put('/api/document/:id', api.editDocument);
+  // app.delete('/api/document/:id', api.deleteDocument);
 
+  app.get('/api/posts', api.posts);
   app.get('/api/post/:id', api.post);
   app.post('/api/post', api.addPost);
   app.put('/api/post/:id', api.editPost);
   app.delete('/api/post/:id', api.deletePost);
+
+  app.get('*', routes.index);
 
 // Start Server =============================================
 

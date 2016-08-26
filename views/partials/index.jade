@@ -1,9 +1,34 @@
-p There are {{posts.length}} posts
-div(ng-repeat='post in posts')
-  h3 {{post.title}}
-  div {{post.text}}
-  a(href='readPost/{{post.id}}') More
-  |  -
-  a(href='editPost/{{post.id}}') Edit
-  |  -
-  a(href='deletePost/{{post.id}}') Delete
+.form-group
+  p There are {{documents.length}} posts
+.form-group
+  #YMapsID.col-md-8(ng-init="center=[45.050922, 41.970001];zoom=12")
+      yandex-map(center="center", zoom="zoom")
+        ymap-marker(ng-repeat="document in documents | startFrom:currentPage*pageSize | limitTo:pageSize",
+                    properties="{balloonContent: document.title}",
+                    coordinates='[document.longitude, document.latitude]')
+          //- ymap-marker(coordinates="map.coords")
+  #RightBox.col-md-4
+.row
+.form-group(style="margin-top: 15px; overflow-y: scroll; height: 400px;")
+    div(ng-repeat='document in documents | startFrom:currentPage*pageSize | limitTo:pageSize')
+      .panel.panel-info
+        .panel-heading
+            a(href='readDocument/{{ document._id }}', id='{{ document._id }}') {{ document.title }}
+        .panel-body
+            p адрес: {{document.address}}
+            p {{document.description}}
+            a(href='editDocument/{{document._id}}') Edit
+
+.form-group
+  .btn-group.btn-group-justified
+    .btn-group
+      button.btn.btn-info(ng-disabled="currentPage == 0", ng-click="currentPage=currentPage-1") Назад
+    .btn-group
+      button.btn.btn-default(disabled="disabled") {{currentPage+1}}/{{numberOfPages()}}
+    .btn-group
+      button.btn.btn-info(ng-disabled="currentPage >= documents.length/pageSize - 1", ng-click="currentPage=currentPage+1") Вперед
+//- a(href='readDocument/{{document.id}}') More
+//- |  -
+//- a(href='editDocument/{{document.id}}') Edit
+//- |  -
+//- a(href='deleteDocument/{{document.id}}') Delete
