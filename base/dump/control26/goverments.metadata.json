@@ -1,1 +1,0 @@
-{ "options" : { "create" : "goverments" }, "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "control26.goverments", "name" : "_id_" } ] }
