@@ -1,0 +1,31 @@
+.form-group
+    h2 {{form.name}}
+.form-group
+    label(for='title') заголовок:
+    input.form-control(ng-model='form.title', name='title')
+.form-group
+    label(for='address') адрес:
+    input.form-control(ng-model='form.address', name='address')
+.form-group
+    label(for="category") Категория
+    select.form-control(name="category", ng-model="category", required, ng-options="c as c.name for c in categories track by c._id")
+        //- option value="{{category}}" selected
+.form-group
+    #YMapsID.col-md-8
+        yandex-map(center="map.center", zoom="map.zoom")
+            ymap-marker(coordinates="map.coords", options="{draggable: true}")
+    #RightBox.col-md-4
+.form-group
+    label(for='description') описание:
+    textarea.form-control(ng-model='form.description', rows='5')
+.form-group
+    p
+      button.btn.btn-primary.form-control(ng-click='editDocument()') Сохранить
+
+//- .control-group(ng-class="{error: saveForm.category.$invalid}")
+//-     label.control-label(for="category") Категория
+//-         .controls
+//-             select.form-control(name="category", ng-model="form.category", required, ng-options="category as category.name for category in categories")
+                    //- class="form-control"></select>
+                    //- <select ng-model="request.volary" ng-options="select volary.volary_id as volary.text for volary in volaries track by volary.volary_id" class="form-control"></select>
+

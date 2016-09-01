@@ -1,0 +1,25 @@
+.form-group
+    h2 {{document.name}}
+.form-group
+    label(for='title') заголовок:
+    input.form-control(readonly="readonly", name='title', value='{{document.title}}')
+.form-group
+    label(for='address') адрес:
+    input.form-control(readonly="readonly", value='{{document.address}}', name='address')
+.form-group
+    label(for='category') категория:
+    input.form-control(readonly="readonly", ng-model='category.name', name='category')
+.form-group
+    #YMapsID.col-md-8
+        yandex-map(center="map.center", zoom="map.zoom")
+            ymap-marker(coordinates="map.coords")
+    #RightBox.col-md-4
+.form-group
+    label(for='description') описание:
+    textarea.form-control(readonly="readonly", rows='5') {{document.description}}
+.form-group
+    p
+      button.btn.btn-primary.form-control(ng-click='closeDocument()') Закрыть
+.form-group
+    div(ng-repeat='comment in document._comments')
+       p {{comment.comment}}`

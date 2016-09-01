@@ -1,5 +1,6 @@
 // grab the document model we just created
 var Document = require('./models/Document.js');
+var Category = require('./models/Category.js');
 
 // initialize our faux database
 var data = {
@@ -21,7 +22,7 @@ exports.documents = function (req, res) {
   Document.find(function(err, documents) {
       // if there is an error retrieving, send the error. nothing after res.send(err) will execute
       if (err)
-        res.send(err)
+        res.send(err);
       res.json(documents); // return all documents in JSON format
     });
 };
@@ -30,7 +31,7 @@ exports.document = function (req, res) {
   var id = req.params.id;
   Document.findOne({ _id : id }, function(err, document) {
     if (err)
-      res.send(err)
+      res.send(err);
     res.json(document); // return document in JSON format
   }).populate("_comments");
 };
@@ -42,19 +43,41 @@ exports.editDocument = function (req, res) {
   console.dir(req.body);
   Document.findOne({ _id : id }, function(err, document) {
     if (err)
-      res.send(false)
+      res.send(false);
     // изменяем поля
     document.title = req.body.title;
     document.description = req.body.description;
+    document.category = req.body.category;
     // сохраняем документ
     document.save(function(err) {
       if (err)
-       res.send(false)
+       res.send(false);
     res.json(true);
     });
   });
 };
 
+// Categories
+// get all +
+exports.categories = function (req, res) {
+    console.log('api get categories', req.params);
+    Category.find(function(err, categories) {
+      if (err)
+        res.send(err);
+      res.json(categories); // return all categories in JSON format
+    });
+};
+
+// get one +
+exports.category = function (req, res) {
+  var id = req.params.id;
+  console.log('api get category :', id);
+  Category.findOne({ _id : id }, function(err, category) {
+    if (err)
+      res.send(err);
+    res.json(category); // return document in JSON format
+  });
+};
 //========================================================
 // GET
 exports.posts = function (req, res) {

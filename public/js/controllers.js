@@ -1,4 +1,4 @@
-'use strict';
+'use strics';
 
 function IndexCtrl($scope, $http) {
   $http.get('/api/documents').
@@ -6,8 +6,9 @@ function IndexCtrl($scope, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.documents = data;
-  //   var posts = [];
-  // data.posts.forEach(function (post, i) {
+
+  // var geoObjects = [];
+  // data.documents.forEach(function (post, i) {
   //   posts.push({
   //     id: i,
   //     title: post.title,
@@ -16,26 +17,39 @@ function IndexCtrl($scope, $http) {
   // });
     $scope.numberOfPages=function(){
       return Math.ceil($scope.documents.length/$scope.pageSize);
-    }
+    };
   });
 }
 
-function ReadDocumentCtrl($scope, $http, $routeParams) {
+function ReadDocumentCtrl($scope, $http, $location, $routeParams, Categories) {
   $http.get('/api/document/' + $routeParams.id).
     success(function(data) {
       $scope.document = data;
+      // $scope.categories = Categories.query();
+      $scope.category =  Categories.get({id: data.category});
       $scope.map = {
         center: [data.longitude, data.latitude],
         coords: [data.longitude, data.latitude],
         zoom: 17
       };
     });
+  $scope.closeDocument = function() {
+    $location.url('/');
+  };
 }
-function EditDocumentCtrl($scope, $http, $location, $routeParams) {
+
+function EditDocumentCtrl($scope, $http, $location, $routeParams, Categories) {
   $scope.form = {};
   $http.get('/api/document/' + $routeParams.id).
     success(function(data) {
       $scope.form = data;
+      // var category = data.category;
+      // $scope.categories = [
+      //   {name : 'Доллары', _id : '1'} ,
+      //   {name : 'Евро' , _id : '2'}
+      // ];
+      $scope.categories = Categories.query();
+      $scope.category =  Categories.get({id: data.category});
       $scope.map = {
         center: [data.longitude, data.latitude],
         coords: [data.longitude, data.latitude],
@@ -44,6 +58,7 @@ function EditDocumentCtrl($scope, $http, $location, $routeParams) {
     });
 
   $scope.editDocument = function () {
+    $scope.form.category = $scope.category._id;
     $http.put('/api/document/' + $routeParams.id, $scope.form).
       success(function(data) {
         $location.url('/readDocument/' + $routeParams.id);

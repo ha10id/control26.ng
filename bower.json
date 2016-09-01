@@ -5,6 +5,8 @@
     "bootstrap": "latest",
     "angular": "latest",
     "angular-route": "latest",
+    "angular-locale": "latest",
+    "angular-resource": "latest",
     "angular-ymaps": "^0.1.0"
   }
 }

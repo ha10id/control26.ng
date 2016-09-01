@@ -13,6 +13,7 @@
 
 // configuration ===========================================
   var db = require('./config/db');
+  mongoose.Promise = global.Promise; // remove warning DeprecationWarning: Mongoose: mpromise ...
   mongoose.connect(db.url); // connect to our mongoDB database (commented out after you enter in your own credentials)
 // all environments
   app.set('port', process.env.PORT || 3000);
@@ -50,6 +51,9 @@
   // app.post('/api/document', api.addDocument);
   app.put('/api/document/:id', api.editDocument);
   // app.delete('/api/document/:id', api.deleteDocument);
+
+  app.get('/api/categories', api.categories);
+  app.get('/api/categories/:id', api.category);
 
   app.get('/api/posts', api.posts);
   app.get('/api/post/:id', api.post);

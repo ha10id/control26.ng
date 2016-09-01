@@ -1,23 +1,44 @@
 .form-group
   p There are {{documents.length}} posts
 .form-group
-  #YMapsID.col-md-8(ng-init="center=[45.050922, 41.970001];zoom=12")
-      yandex-map(center="center", zoom="zoom")
+  #YMapsID(ng-init="center=[45.050922, 41.970001];zoom=12")
+      yandex-map(zoom="zoom")
         ymap-marker(ng-repeat="document in documents | startFrom:currentPage*pageSize | limitTo:pageSize",
-                    properties="{balloonContent: document.title}",
+                    properties="{balloonContent: document.title }",
                     coordinates='[document.longitude, document.latitude]')
           //- ymap-marker(coordinates="map.coords")
-  #RightBox.col-md-4
+  //- #RightBox.col-md-4
+  //-   .row
+  //-     .col-md-8(style="height: 300px")
+  //-         //- .form-group
+  //-     .col-md-4
+  //-         img.banner(src="/img/grad.png", style="margin-top: 40px;")
+  //-   .row
+  //-       .col-md-6
+  //-           a(href="http://stavregion.ru/")
+  //-               img.banner(src="/img/stavregion.png")
+  //-       .col-md-6
+  //-           a(href="http://gosuslugi.ru/")
+  //-               img.banner(src="/img/1458628577.jpg")
+  //-   .row
+  //-       .col-md-6
+  //-           a(href="http://26gosuslugi.ru/")
+  //-               img.banner(src="/img/26gosuslugi.jpg")
+  //-       .col-md-6
+  //-           a(href="http://umfc26.ru/")
+  //-               img.banner(src="/img/mfc.png")
 .row
 .form-group(style="margin-top: 15px; overflow-y: scroll; height: 400px;")
     div(ng-repeat='document in documents | startFrom:currentPage*pageSize | limitTo:pageSize')
-      .panel.panel-info
+      .panel(ng-class="{ 'panel-success': document.status == 2, 'panel-info': document.status == 1, 'panel-warning': document.status == 0 }")
         .panel-heading
             a(href='readDocument/{{ document._id }}', id='{{ document._id }}') {{ document.title }}
         .panel-body
             p адрес: {{document.address}}
             p {{document.description}}
             a(href='editDocument/{{document._id}}') Edit
+        .panel-footer
+            small создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
 
 .form-group
   .btn-group.btn-group-justified
