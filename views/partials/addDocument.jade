@@ -1,0 +1,22 @@
+.form-group
+    h2 {{form.name}}
+.form-group
+    label(for='title') заголовок:
+    input.form-control(ng-model='form.title', name='title', required, placeholder="введите заголовок обращения")
+.form-group
+    label(for='address') адрес:
+    input.form-control(ng-model='form.address', name='address', required, placeholder="переместите метку на карте для автоматического заполнения")
+.form-group
+    label(for="category") Категория
+    select.form-control(name="category", ng-model="category", required, ng-options="c as c.name for c in categories track by c._id")
+.form-group
+    #YMapsID.col-md-8
+        yandex-map(center="map.center", zoom="map.zoom")
+            ymap-marker(coordinates="map.coords", options="{draggable: true}")
+    #RightBox.col-md-4
+.form-group
+    label(for='description') описание:
+    textarea.form-control(ng-model='form.description', rows='5', required)
+.form-group
+    p
+      button.btn.btn-primary.form-control(ng-click='submitDocument()') Сохранить
