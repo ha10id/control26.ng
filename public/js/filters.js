@@ -6,6 +6,7 @@ angular.module('myApp.filters', [])
 		return String(text).replace(/\%VERSION\%/mg, version);
 	};
 })
+// фильтр для пагинатора
 .filter('startFrom', function() {
 	return function(input, start) {
 		if (!input || !input.length) { return; }

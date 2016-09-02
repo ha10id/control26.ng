@@ -24,7 +24,7 @@ exports.documents = function (req, res) {
       if (err)
         res.send(err);
       res.json(documents); // return all documents in JSON format
-    });
+    }).sort({datestamp: -1});
 };
 // get one +
 exports.document = function (req, res) {

@@ -1,6 +1,9 @@
 .form-group
     h2 {{document.name}}
 .form-group
+    span.label.label-info
+        | обращение создано {{document.datestamp  | date}}
+.form-group
     label(for='title') заголовок:
     input.form-control(readonly="readonly", name='title', value='{{document.title}}')
 .form-group

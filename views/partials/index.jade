@@ -1,5 +1,5 @@
-.form-group
-  p There are {{documents.length}} posts
+.row
+  | &nbsp
 .form-group
   #YMapsID(ng-init="center=[45.050922, 41.970001];zoom=12")
       yandex-map(zoom="zoom")
@@ -28,7 +28,9 @@
   //-           a(href="http://umfc26.ru/")
   //-               img.banner(src="/img/mfc.png")
 .row
-.form-group(style="margin-top: 15px; overflow-y: scroll; height: 400px;")
+.form-group
+  p Всего документов {{documents.length}}
+.form-group(style="margin-top: 15px; overflow-y: scroll; height: 400px")
     div(ng-repeat='document in documents | startFrom:currentPage*pageSize | limitTo:pageSize')
       .panel(ng-class="{ 'panel-success': document.status == 2, 'panel-info': document.status == 1, 'panel-warning': document.status == 0 }")
         .panel-heading
@@ -38,8 +40,11 @@
             p {{document.description}}
             a(href='editDocument/{{document._id}}') Edit
         .panel-footer
-            small создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
-
+            span.label.label-default создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
+.row
+.form-group
+  div(ng-repeat='post in posts | startFrom:currentPage*pageSize | limitTo:pageSize')
+    | {{post.description}}
 .form-group
   .btn-group.btn-group-justified
     .btn-group

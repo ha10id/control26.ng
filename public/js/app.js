@@ -2,6 +2,7 @@
 angular.module('myApp', ['ngRoute', 'ymaps', 'myApp.filters', 'myApp.services', 'myApp.directives']).
 config(function(ymapsConfig){
   ymapsConfig.clusterize = true;
+  ymapsConfig.markerOptions.preset = 'islands#darkblueDotIcon';
 }).
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider.
@@ -16,6 +17,10 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
   when('/editDocument/:id', {
     templateUrl: 'partials/editDocument',
     controller: EditDocumentCtrl
+  }).
+  when('/addDocument', {
+    templateUrl: 'partials/addDocument',
+    controller: AddDocumentCtrl
   }).
   when('/addPost', {
     templateUrl: 'partials/addPost',
