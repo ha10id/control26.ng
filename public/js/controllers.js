@@ -6,6 +6,10 @@ function IndexCtrl($scope, $http) {
     $scope.currentPage = 0;
     $scope.pageSize = 10;
     $scope.documents = data;
+    // var _map;
+    //   $scope.afterMapInit = function(map){
+    // _map = map;
+    // };
     $scope.numberOfPages=function(){
       return Math.ceil($scope.documents.length/$scope.pageSize);
     };
@@ -17,9 +21,14 @@ function ReadDocumentCtrl($scope, $http, $location, $routeParams, Categories) {
     success(function(data) {
       $scope.document = data;
       $scope.category =  Categories.get({id: data.category});
+      var _map;
+        $scope.afterMapInit = function(nMap){
+      _map = nMap;
+      };
+      // широта latitude (45)
       $scope.map = {
         center: [data.longitude, data.latitude],
-        coords: [data.longitude, data.latitude],
+        point: { geometry: {type: "Point",coordinates: [data.longitude, data.latitude]}},
         zoom: 17
       };
     });

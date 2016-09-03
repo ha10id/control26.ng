@@ -20,6 +20,7 @@ var Document = new Schema({
     pcid: Number,
     status: Number,
     datestamp: Date,
+    lastedit: Date,
     _comments: [{ type: ObjectId, ref: 'Comment' }]
 });
 
@@ -28,9 +29,17 @@ Document.virtual('id')
         return this._id.toHexString();
 });
 
+Document.virtual('geoObject')
+    .get(function() {
+        var go = {
+                geometry: {type: "Point",coordinates: [this.longitude, this.latitude]}
+        };
+        return this._id.toHexString();
+});
+
 Document.pre('save', function(next) {
     // this.keywords = extractKeywords(this.data);
-    this.datestamp = new Date();
+    this.lastedit = new Date();
     // this.status = 0;
     console.log('document presave', this.description);
     next();

@@ -13,9 +13,12 @@
     label(for='category') категория:
     input.form-control(readonly="readonly", ng-model='category.name', name='category')
 .form-group
+    input.form-control(readonly="readonly", ng-model='map.point', value='{{map.point.geometry.coordinates}}' name='point')
+.form-group
     #YMapsID.col-md-8
-        yandex-map(center="map.center", zoom="map.zoom")
-            ymap-marker(coordinates="map.coords")
+        ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-after-init="afterMapInit($target)")
+            //- ya-map(ya-center="map.center", ya-zoom="map.zoom", ya-after-init="afterMapInit($target)")
+            ya-geo-object(ng-model='map.point', ya-source='map.point', ya-options="{draggable:true}")
     #RightBox.col-md-4
 .form-group
     label(for='description') описание:

@@ -1,9 +1,9 @@
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['ngRoute', 'ymaps', 'myApp.filters', 'myApp.services', 'myApp.directives']).
-config(function(ymapsConfig){
-  ymapsConfig.clusterize = true;
-  ymapsConfig.markerOptions.preset = 'islands#darkblueDotIcon';
-}).
+angular.module('myApp', ['ngRoute', 'yaMap', 'myApp.filters', 'myApp.services', 'myApp.directives']).
+// config(function(ymapsConfig){
+//   ymapsConfig.clusterize = true;
+//   ymapsConfig.markerOptions.preset = 'islands#darkblueDotIcon';
+// }).
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider.
   when('/', {

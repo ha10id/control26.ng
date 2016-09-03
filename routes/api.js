@@ -15,6 +15,7 @@ var data = {
   }
   ]
 };
+//========================================================
 // Documents
 // get all +
 exports.documents = function (req, res) {
@@ -23,6 +24,17 @@ exports.documents = function (req, res) {
       // if there is an error retrieving, send the error. nothing after res.send(err) will execute
       if (err)
         res.send(err);
+      documents = documents.map(function(d) {
+        return {
+          id: d.id,
+          title: d.title,
+          address: d.address,
+          latitude: d.latitude,
+          longitude: d.longitude,
+          description: d.description,
+          status: d.status,
+          geoObject: {geometry: {type: "Point",coordinates: [d.longitude, d.latitude]}, properties: {hintContent:  d.title, balloonContent: '<a href="/readDocument/' + d.id +'">' + d.title + '</a>' + '<p>' + d.description + '</p>' }}
+      }});
       res.json(documents); // return all documents in JSON format
     }).sort({datestamp: -1});
 };
@@ -48,7 +60,7 @@ exports.editDocument = function (req, res) {
     document.title = req.body.title;
     document.description = req.body.description;
     document.category = req.body.category;
-    // сохраняем документ
+    // сохраняем отредактированный документ
     document.save(function(err) {
       if (err)
        res.send(false);
@@ -56,7 +68,7 @@ exports.editDocument = function (req, res) {
     });
   });
 };
-
+//========================================================
 // Categories
 // get all +
 exports.categories = function (req, res) {
@@ -67,7 +79,6 @@ exports.categories = function (req, res) {
       res.json(categories); // return all categories in JSON format
     });
 };
-
 // get one +
 exports.category = function (req, res) {
   var id = req.params.id;
