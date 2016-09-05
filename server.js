@@ -48,7 +48,7 @@
 
   app.get('/api/documents', api.documents);
   app.get('/api/document/:id', api.document);
-  // app.post('/api/document', api.addDocument);
+  app.post('/api/document', api.addDocument);
   app.put('/api/document/:id', api.editDocument);
   // app.delete('/api/document/:id', api.deleteDocument);
 

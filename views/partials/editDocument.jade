@@ -1,4 +1,7 @@
 .form-group
+    input#lat(ng-hide="invisible", type="text", name='latitude', ng-model="form.latitude")
+    input#lng(ng-hide="invisible", type="text", name='longitude', ng-model="form.longitude")
+.form-group
     h2 {{form.name}}
 .form-group
     label(for='title') заголовок:
@@ -12,8 +15,8 @@
         //- option value="{{category}}" selected
 .form-group
     #YMapsID.col-md-8
-        yandex-map(center="map.center", zoom="map.zoom")
-            ymap-marker(coordinates="map.coords", options="{draggable: true}")
+        ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-after-init="afterMapInit($target)")
+            ya-geo-object(ng-model='map.point', ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
     #RightBox.col-md-4
 .form-group
     label(for='description') описание:

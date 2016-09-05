@@ -34,7 +34,8 @@ exports.documents = function (req, res) {
           description: d.description,
           status: d.status,
           geoObject: {geometry: {type: "Point",coordinates: [d.longitude, d.latitude]}, properties: {hintContent:  d.title, balloonContent: '<a href="/readDocument/' + d.id +'">' + d.title + '</a>' + '<p>' + d.description + '</p>' }}
-      }});
+        };
+      });
       res.json(documents); // return all documents in JSON format
     }).sort({datestamp: -1});
 };
@@ -46,6 +47,12 @@ exports.document = function (req, res) {
       res.send(err);
     res.json(document); // return document in JSON format
   }).populate("_comments");
+};
+// POST
+exports.addDocument = function (req, res) {
+  // data.posts.push(req.body);
+  console.log(req.body);
+  res.json(req.body);
 };
 // put document (update) +50%
 exports.editDocument = function (req, res) {
@@ -60,6 +67,9 @@ exports.editDocument = function (req, res) {
     document.title = req.body.title;
     document.description = req.body.description;
     document.category = req.body.category;
+    document.longitude = req.body.longitude;
+    document.latitude = req.body.latitude;
+    document.address = req.body.address;
     // сохраняем отредактированный документ
     document.save(function(err) {
       if (err)

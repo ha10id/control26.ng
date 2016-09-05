@@ -13,13 +13,46 @@
     label(for='category') категория:
     input.form-control(readonly="readonly", ng-model='category.name', name='category')
 .form-group
-    input.form-control(readonly="readonly", ng-model='map.point', value='{{map.point.geometry.coordinates}}' name='point')
-.form-group
     #YMapsID.col-md-8
         ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-after-init="afterMapInit($target)")
             //- ya-map(ya-center="map.center", ya-zoom="map.zoom", ya-after-init="afterMapInit($target)")
-            ya-geo-object(ng-model='map.point', ya-source='map.point', ya-options="{draggable:true}")
+            ya-geo-object(ng-model='map.point', ya-source='map.point')
     #RightBox.col-md-4
+        .row
+            .col-md-6(style="padding: 2px 2px 2px 2px")
+                img.img-thumbnail(src="/img/empty.png", style="width: 100%")
+            .col-md-6(style="padding: 2px 2px 2px 2px")
+                img.img-thumbnail(src="/img/empty.png", style="width: 100%")
+            .col-md-6(style="padding: 2px 2px 2px 2px")
+                img.img-thumbnail(src="/img/empty.png", style="width: 100%")
+            .col-md-6(style="padding: 2px 2px 2px 2px")
+                img.img-thumbnail(src="/img/empty.png", style="width: 100%")
+        //- .row(style="padding: 15px 5px 0 5px")
+        //-     button.btn.btn-primary.form-control загрузить изображение
+        //-             span
+        //-             - if ('document.images[1]' !== undefined)
+        //-                 a(data-toggle="modal", data-target="#viewImage1")
+        //-                     span
+        //-                         img.img-thumbnail(src="/uploads/thumbs/document.images[1]", style="width: 100%")
+        //-             - else
+        //-                 img.img-thumbnail(src="/img/epmty.png", style="width: 100%")
+        //- .row(style="margin-top: 15px")
+        //-     .col-md-6
+        //-             span
+        //-             - if ('document.images[2]' !== undefined)
+        //-                 a(data-toggle="modal", data-target="#viewImage2")
+        //-                     span
+        //-                         img.img-thumbnail(src="/uploads/thumbs/document.images[2]", style="width: 100%")
+        //-             - else
+        //-                 img.img-thumbnail(src="/img/epmty.png", style="width: 100%")
+        //-     .col-md-6
+        //-             span
+        //-             - if ('document.images[3]' !== undefined)
+        //-                 a(data-toggle="modal", data-target="#viewImage3")
+        //-                     span
+        //-                         img.img-thumbnail(src="/uploads/thumbs/document.images[3]", style="width: 100%")
+        //-             - else
+        //-                 img.img-thumbnail(src="/img/epmty.png", style="width: 100%")
 .form-group
     label(for='description') описание:
     textarea.form-control(readonly="readonly", rows='5') {{document.description}}
@@ -28,4 +61,4 @@
       button.btn.btn-primary.form-control(ng-click='closeDocument()') Закрыть
 .form-group
     div(ng-repeat='comment in document._comments')
-       p {{comment.comment}}`
+       p {{comment.comment}}

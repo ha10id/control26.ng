@@ -2,7 +2,7 @@
   | &nbsp
 .form-group
   #YMapsID
-    ya-map(ya-zoom="12", ya-center="[41.970001, 45.050922]")
+    ya-map(ya-zoom="12", ya-center="[41.970001, 45.050922]", ya-event-click="mapClick($event)")
       ya-geo-object(ng-repeat="document in documents | startFrom:currentPage*pageSize | limitTo:pageSize", ya-source='document.geoObject')
 
   //- #YMapsID(ng-init="center=[45.050922, 41.970001];zoom=12")

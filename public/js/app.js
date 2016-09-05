@@ -18,7 +18,7 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
     templateUrl: 'partials/editDocument',
     controller: EditDocumentCtrl
   }).
-  when('/addDocument', {
+  when('/addDocument/:longitude,:latitude', {
     templateUrl: 'partials/addDocument',
     controller: AddDocumentCtrl
   }).
