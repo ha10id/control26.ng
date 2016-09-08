@@ -1,25 +1,24 @@
 'use strics';
 // главная страница
-function IndexCtrl($scope, $http, $location, $routeParams) {
+function IndexCtrl($scope, $http, $location, $routeParams, Categories) {
   $http.get('/api/documents').
     success(function(data, status, headers, config) {
-    $scope.currentPage = 0;
-    $scope.pageSize = 10;
-    $scope.documents = data;
-    // var _map;
-    //   $scope.afterMapInit = function(map){
-    // _map = map;
-    // };
-    // вешаем событие на click на карте
-    $scope.mapClick = function(e){
-      var coords = e.get('coords');
-      $location.url('/addDocument/' + coords);
-    };
-    $scope.numberOfPages=function(){
-      return Math.ceil($scope.documents.length/$scope.pageSize);
-    };
-  });
-}
+      $scope.currentPage = 0;
+      $scope.pageSize = 10;
+      // заливаем результат запроса в скоуп
+      $scope.documents = data;
+      $scope.categories = Categories.query();
+      // вешаем событие на click на карте
+      $scope.mapClick = function(e){
+        var coords = e.get('coords');
+        $location.url('/addDocument/' + coords);
+      };
+      // посчитаем количество страниц
+      $scope.numberOfPages=function(){
+        return Math.ceil($scope.documents.length/$scope.pageSize);
+      };
+    });
+  }
 // просмотр обращения
 function ReadDocumentCtrl($scope, $http, $location, $routeParams, Categories) {
   $http.get('/api/document/' + $routeParams.id).
@@ -27,10 +26,10 @@ function ReadDocumentCtrl($scope, $http, $location, $routeParams, Categories) {
       $scope.document = data;
       $scope.document.images[0] = "/img/epmty.png";
       $scope.category =  Categories.get({id: data.category});
-      var _map;
-        $scope.afterMapInit = function(nMap){
-      _map = nMap;
-      };
+      // var _map;
+      //   $scope.afterMapInit = function(nMap){
+      // _map = nMap;
+      // };
       // широта latitude (45)
       $scope.map = {
         center: [data.longitude, data.latitude],

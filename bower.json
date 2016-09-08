@@ -8,6 +8,7 @@
     "angular-locale": "latest",
     "angular-resource": "latest",
     "angular-ymaps": "^0.1.0",
-    "ya-map": "angular-yandex-map#^1.0.9"
+    "ya-map": "angular-yandex-map#^1.0.9",
+    "angular-bootstrap": "^2.1.3"
   }
 }

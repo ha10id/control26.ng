@@ -1,3 +1,4 @@
+// страница редактирования обращения
 .form-group
     input#lat(ng-hide="invisible", type="text", name='latitude', ng-model="form.latitude")
     input#lng(ng-hide="invisible", type="text", name='longitude', ng-model="form.longitude")
@@ -15,8 +16,8 @@
         //- option value="{{category}}" selected
 .form-group
     #YMapsID.col-md-8
-        ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-after-init="afterMapInit($target)")
-            ya-geo-object(ng-model='map.point', ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
+        ya-map(ya-zoom="17", ya-center="{{map.center}}")
+            ya-geo-object(ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
     #RightBox.col-md-4
 .form-group
     label(for='description') описание:
@@ -24,11 +25,3 @@
 .form-group
     p
       button.btn.btn-primary.form-control(ng-click='editDocument()') Сохранить
-
-//- .control-group(ng-class="{error: saveForm.category.$invalid}")
-//-     label.control-label(for="category") Категория
-//-         .controls
-//-             select.form-control(name="category", ng-model="form.category", required, ng-options="category as category.name for category in categories")
-                    //- class="form-control"></select>
-                    //- <select ng-model="request.volary" ng-options="select volary.volary_id as volary.text for volary in volaries track by volary.volary_id" class="form-control"></select>
-

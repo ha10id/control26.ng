@@ -1,5 +1,6 @@
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['ngRoute', 'yaMap', 'myApp.filters', 'myApp.services', 'myApp.directives']).
+angular.module('myApp', ['ngRoute', 'yaMap', 'ui.bootstrap', 'myApp.filters', 'myApp.services', 'myApp.directives']).
+config(function (yaMapSettingsProvider) { yaMapSettingsProvider.setOrder('latlong'); }).
 // config(function(ymapsConfig){
 //   ymapsConfig.clusterize = true;
 //   ymapsConfig.markerOptions.preset = 'islands#darkblueDotIcon';

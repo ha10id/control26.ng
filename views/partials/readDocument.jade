@@ -14,8 +14,8 @@
     input.form-control(readonly="readonly", ng-model='category.name', name='category')
 .form-group
     #YMapsID.col-md-8
-        ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-after-init="afterMapInit($target)")
-            //- ya-map(ya-center="map.center", ya-zoom="map.zoom", ya-after-init="afterMapInit($target)")
+        ya-map(ya-zoom="17", ya-center="{{map.center}}")
+            //- ya-map(ya-center="map.center", ya-zoom="map.zoom")
             ya-geo-object(ng-model='map.point', ya-source='map.point')
     #RightBox.col-md-4
         .row
@@ -58,7 +58,8 @@
     textarea.form-control(readonly="readonly", rows='5') {{document.description}}
 .form-group
     p
-      button.btn.btn-primary.form-control(ng-click='closeDocument()') Закрыть
+        button.btn.btn-primary.form-control(ng-click='closeDocument()') Закрыть
+        button.btn.btn-default.form-control Добавить комментарий
 .form-group
     div(ng-repeat='comment in document._comments')
        p {{comment.comment}}

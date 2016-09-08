@@ -1,3 +1,4 @@
+// страница создания обращения
 .form-group
     input#lat(ng-hide="invisible", type="text", name='latitude', ng-model="form.latitude")
     input#lng(ng-hide="invisible", type="text", name='longitude', ng-model="form.longitude")
@@ -5,21 +6,21 @@
     h2 {{form.name}}
 .form-group
     label(for='title') заголовок:
-    input.form-control(ng-model='form.title', name='title', required, placeholder="введите заголовок обращения")
+    input.form-control(ng-model='form.title', name='title', ng-required="true", placeholder="введите заголовок обращения")
 .form-group
     label(for='address') адрес:
-    input.form-control(ng-model='form.address', name='address', required, placeholder="переместите метку на карте для автоматического заполнения")
+    input.form-control(ng-model='form.address', name='address', ng-required="true", placeholder="переместите метку на карте для автоматического заполнения")
 .form-group
     label(for="category") Категория
-    select.form-control(name="category", ng-model="category", required, ng-options="c as c.name for c in categories track by c._id")
+    select.form-control(name="category", ng-model="category", ng-required="true", ng-options="c as c.name for c in categories track by c._id")
 .form-group
     #YMapsID.col-md-8
-        ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-before-init="beforeInit()", ya-after-init="afterMapInit($target)")
-            ya-geo-object(ng-model='map.point', ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
+        ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-before-init="beforeInit()")
+            ya-geo-object(ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
     #RightBox.col-md-4
 .form-group
     label(for='description') описание:
-    textarea.form-control(ng-model='form.description', rows='5', required)
+    textarea.form-control(ng-model='form.description', rows='5', ng-required="true")
 .form-group
     p
       button.btn.btn-primary.form-control(ng-click='submitDocument()') Сохранить

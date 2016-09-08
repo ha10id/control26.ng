@@ -27,12 +27,14 @@ exports.documents = function (req, res) {
       documents = documents.map(function(d) {
         return {
           id: d.id,
+          name: d.name,
           title: d.title,
           address: d.address,
           latitude: d.latitude,
           longitude: d.longitude,
           description: d.description,
           status: d.status,
+          datestamp: d.datestamp,
           geoObject: {geometry: {type: "Point",coordinates: [d.longitude, d.latitude]}, properties: {hintContent:  d.title, balloonContent: '<a href="/readDocument/' + d.id +'">' + d.title + '</a>' + '<p>' + d.description + '</p>' }}
         };
       });
