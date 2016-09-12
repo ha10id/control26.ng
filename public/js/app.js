@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['ngRoute', 'yaMap', 'ui.bootstrap', 'myApp.filters', 'myApp.services', 'myApp.directives']).
+angular.module('myApp', ['ngRoute', 'yaMap', 'ui.bootstrap', 'myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.components']).
 config(function (yaMapSettingsProvider) { yaMapSettingsProvider.setOrder('latlong'); }).
 // config(function(ymapsConfig){
 //   ymapsConfig.clusterize = true;
@@ -22,6 +22,10 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
   when('/addDocument/:longitude,:latitude', {
     templateUrl: 'partials/addDocument',
     controller: AddDocumentCtrl
+  }).
+  when('/personalArea', {
+    templateUrl: 'partials/personalArea',
+    controller: PersonalAreaCtrl
   }).
   when('/addPost', {
     templateUrl: 'partials/addPost',

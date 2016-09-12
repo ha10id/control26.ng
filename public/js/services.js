@@ -6,5 +6,12 @@ angular.module('myApp.services', ['ngResource'])
 .value('version', '0.1')
 // Фабрика объекта "Категории"
 .factory('Categories', function($resource){
-	return $resource('api/categories/:id', {});
+	return $resource('api/categories/:id', null, {
+		'update': { method:'PUT'}
+	});
+})
+.factory('Documents', function($resource){
+	return $resource('api/documents/:id', null, {
+		'update': { method:'PUT'}
+	});
 });

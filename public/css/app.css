@@ -78,12 +78,12 @@ yandex-map {
 }
 
 #YMapsID {
-  height: 400px;
+  height: 360px;
   background-color: lightgray;
   padding: 0 !important;
 }
 #RightBox {
-  height: 400px;
+  height: 360px;
   background-color: lightgray;
 }
 

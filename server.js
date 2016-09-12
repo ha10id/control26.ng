@@ -11,6 +11,9 @@
   var http   = require('http');
   var path   = require('path');
 
+
+
+
 // configuration ===========================================
   var db = require('./config/db');
   mongoose.Promise = global.Promise; // remove warning DeprecationWarning: Mongoose: mpromise ...
@@ -47,9 +50,9 @@
 // JSON API
 
   app.get('/api/documents', api.documents);
-  app.get('/api/document/:id', api.document);
-  app.post('/api/document', api.addDocument);
-  app.put('/api/document/:id', api.editDocument);
+  app.get('/api/documents/:id', api.document);
+  app.post('/api/documents', api.addDocument);
+  app.put('/api/documents/:id', api.editDocument);
   // app.delete('/api/document/:id', api.deleteDocument);
 
   app.get('/api/categories', api.categories);

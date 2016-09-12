@@ -31,6 +31,7 @@
 // фильтр
 .form-group(style="background-color: #F7F1D9; font-color: #000")
   ul.nav.nav-pills
+    //фильтр по статусу
     .col-sm-2(style="margin: 0; padding: 0;")
       .btn-group.btn-group-justified(uib-dropdown, dropdown-append-to-body)
         #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle) Статус обращения
@@ -45,25 +46,23 @@
           li.divider
           li(role="menuitem")
             a(href="#", ng-click="iStatus={}") Все
+    // фильтр по категории
     .col-sm-2(style="margin: 0; padding: 0;")
       .btn-group.btn-group-justified(uib-dropdown, dropdown-append-to-body)
         #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle) Категория
           span.caret
-        ul.dropdown-menu(uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
+        ul.dropdown-menu(style="overflow-y: scroll; max-height: 200px", uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
           li(role="menuitem", ng-repeat="category in categories")
             a(href="#") {{category.name | limitTo: 55}}
-          //-   a(href="#", ng-click="iStatus={status:0}") Новое
-          //- li(role="menuitem")
-          //-   a(href="#", ng-click="iStatus={status:1}") В работе
-          //- li(role="menuitem")
-          //-   a(href="#", ng-click="iStatus={status:2}") Закрыто
-          //- li.divider
-          //- li(role="menuitem")
-          //-   a(href="#", ng-click="iStatus={}") Все
+    // фильтр по дате
     .col-sm-2(style="margin: 0; padding: 0;")
       .btn-group.btn-group-justified(uib-dropdown, dropdown-append-to-body)
-        #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle) Диапазон дат
+        #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle) По дате
           span.caret
+        ul.dropdown-menu(uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
+          //- li(role="menuitem")
+          input.form-control(id="iDatafilter", name="idatafilter", type="text", ng-model="dataFrom", placeholder="строка поиска...")
+
         // фильтр поиска в обращениях
     .col-sm-2(style="margin: 0 0 0 4px; padding: 0; float: right;")
         input.form-control(uib-dropdown-search,id="ifilter", name="ifilter", type="text", ng-model="query", placeholder="строка поиска...")
@@ -72,7 +71,7 @@
 
 // список обращений
 .row
-.form-group(style="margin-top: 15px; overflow-y: scroll; height: 400px")
+.form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
     div(ng-repeat='document in filterDocuments | startFrom:currentPage*pageSize | limitTo:pageSize | filter:query')
       .panel(ng-class="{ 'panel-success': document.status == 2, 'panel-info': document.status == 1, 'panel-warning': document.status == 0 }")
         .panel-heading

@@ -32,16 +32,21 @@ Document.virtual('id')
 Document.virtual('geoObject')
     .get(function() {
         var go = {
-                geometry: {type: "Point",coordinates: [this.longitude, this.latitude]}
+            geometry: {
+                type: "Point",
+                coordinates: [this.longitude, this.latitude]
+            },
+            properties: {
+                hintContent:  this.title,
+                balloonContent: '<a href="/readDocument/' + this.id +'">' + this.title + '</a>' + '<p>' + this.description + '</p>'
+            }
         };
-        return this._id.toHexString();
+        return go;
 });
 
 Document.pre('save', function(next) {
-    // this.keywords = extractKeywords(this.data);
     this.lastedit = new Date();
-    // this.status = 0;
-    console.log('document presave', this.description);
+    console.log('document presave', this._id.toHexString());
     next();
 });
 

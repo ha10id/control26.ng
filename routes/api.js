@@ -17,25 +17,23 @@ var data = {
 };
 //========================================================
 // Documents
-// get all +
+// список документов +
 exports.documents = function (req, res) {
-  // var documents = [];
   Document.find(function(err, documents) {
-      // if there is an error retrieving, send the error. nothing after res.send(err) will execute
       if (err)
         res.send(err);
-      documents = documents.map(function(d) {
+      documents = documents.map(function(data) {
         return {
-          id: d.id,
-          name: d.name,
-          title: d.title,
-          address: d.address,
-          latitude: d.latitude,
-          longitude: d.longitude,
-          description: d.description,
-          status: d.status,
-          datestamp: d.datestamp,
-          geoObject: {geometry: {type: "Point",coordinates: [d.longitude, d.latitude]}, properties: {hintContent:  d.title, balloonContent: '<a href="/readDocument/' + d.id +'">' + d.title + '</a>' + '<p>' + d.description + '</p>' }}
+          id: data.id,
+          name: data.name,
+          title: data.title,
+          address: data.address,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          description: data.description,
+          status: data.status,
+          datestamp: data.datestamp,
+          geoObject: data.geoObject
         };
       });
       res.json(documents); // return all documents in JSON format
@@ -44,17 +42,34 @@ exports.documents = function (req, res) {
 // get one +
 exports.document = function (req, res) {
   var id = req.params.id;
+  console.log("-----------------------------------------");
+  console.log('api get document :', id);
   Document.findOne({ _id : id }, function(err, document) {
     if (err)
       res.send(err);
-    res.json(document); // return document in JSON format
+    console.log(document);
+    res.json(document); // return one document in JSON format
   }).populate("_comments");
 };
 // POST
 exports.addDocument = function (req, res) {
   // data.posts.push(req.body);
-  console.log(req.body);
-  res.json(req.body);
+  console.log("-----------------------------------------");
+  console.log("создание документа: \n");
+  // заполняем поля статуса и даты создания документа
+  req.body.status = 0;
+  req.body.datestamp = new Date();
+  // новый объект
+  var newDocument = new Document(req.body);
+  // пробуем записать
+  newDocument.save(function(err) {
+    console.log(newDocument);
+    var data = newDocument.toObject();
+    data.id = data._id;
+    if (err)
+      res.send(err);
+    res.json(data);
+  });
 };
 // put document (update) +50%
 exports.editDocument = function (req, res) {
