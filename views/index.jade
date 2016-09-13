@@ -2,6 +2,8 @@ extends layout
 
 block body
   div.container
+    a(<a href="/documents")
+        img.hd(src='img/hd.jpg', title='на главную страницу')
     <!-- HEADER -->
     .navbar.navbar-default
       ul.nav.navbar-nav
@@ -9,6 +11,10 @@ block body
           a(href="/") главная
         li
           a(href="/addDocument") личный кабинет
+        li
+          a(href='/login') администрирование
+        li
+          a(href='/login') вход через ЕСИА
     div(ng-view)
     img.hd(src="img/footer.jpg")
   script(src='libs/angular/angular.min.js')
@@ -16,6 +22,8 @@ block body
   script(src='libs/angular-route/angular-route.min.js')
   script(src='libs/angular-resource/angular-resource.min.js')
   script(src='libs/angular-bootstrap/ui-bootstrap-tpls.min.js')
+  script(src='libs/ng-file-upload/ng-file-upload-shim.min.js')
+  script(src='libs/ng-file-upload/ng-file-upload.min.js')
   script(src='libs/ya-map/ya-map-2.1.min.js')
   script(src='js/app.js')
   script(src='js/services.js')

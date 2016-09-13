@@ -1,3 +1,5 @@
+var gm              = require('gm');
+var fs              = require('fs');
 // grab the document model we just created
 var Document = require('./models/Document.js');
 var Category = require('./models/Category.js');
@@ -115,6 +117,34 @@ exports.category = function (req, res) {
       res.send(err);
     res.json(category); // return document in JSON format
   });
+};
+//========================================================
+// загрузка картинок
+exports.imageUpload = function (req, res, next) {
+  var file = req.files.file;
+  console.log(file.name); //original name (ie: sunset.png)
+  console.log(file.path); //tmp path (ie: /tmp/12345-xyaz.png)
+  console.log(file.type); //tmp path (ie: /tmp/12345-xyaz.png)
+  console.log(req.body.document_id);
+  var tmp_path = file.path;
+  var target_path = 'public/uploads/' + file.name;
+        fs.renameSync(tmp_path, target_path, function(err) {
+            if (err) console.error(err.stack);
+        });
+        // заделаем тумбочки
+        gm(target_path)
+            .resize(160, 130, "!")
+            .noProfile()
+            .write('public/uploads/thumbs/' + file.name, function(err) {
+                if (err) console.error(err.stack);
+            });
+        // ищем текущий документ чтобы записать в него адрес фотки
+        Document.findOne({ _id: req.body.document_id }, function(err, d) {
+            if (!d) return next(new NotFound('Document not found'));
+            d.images.push(file.name);
+            d.save();
+            // console.log(d.images);
+        });
 };
 //========================================================
 // GET

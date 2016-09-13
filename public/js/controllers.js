@@ -19,6 +19,14 @@
 //     });
 //   };
 // }
+
+// использование промисов (устарело)
+// var query = UserService.query();
+// query.$promise.then(function(data) {
+//      $scope.users = data;
+//      // Do whatever when the request is finished
+// });
+
 // главная страница
 function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
   $scope.currentPage = 0;
@@ -56,7 +64,7 @@ function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories
 }
 
 // редактирование обращения
-function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories) {
+function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories, Upload, $timeout) {
   $scope.invisible = true;
   $scope.form = {};
   // вешаем событие на dragend маркера
@@ -93,6 +101,38 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
       zoom: 17
     };
   });
+  // aeyrwbz pfuheprb bpj,hf;tybq
+  $scope.uploadFiles = function(file, errFiles) {
+    $scope.f = file;
+    $scope.errFile = errFiles && errFiles[0];
+    if (file) {
+      file.upload = Upload.upload({
+        url: '/api/image/upload',
+        data: {document_id: $routeParams.id, file: file}
+
+      });
+
+      file.upload.then(function (response) {
+        $timeout(function () {
+          file.result = response.data;
+          Documents.get({id: $routeParams.id}, function(data){
+            $scope.form = data;
+            $scope.$apply();
+          });
+        });
+      }, function (response) {
+        if (response.status > 0)
+          $scope.errorMsg = response.status + ': ' + response.data;
+      }, function (evt) {
+        file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+        //$scope.$apply();
+      });
+
+      // file.upload.finally(cb) {
+      //   $scope.document.images[0] = file.path;
+      // };
+    }
+  };
   // функция обновления документа (кнопка "сохранить")
   $scope.editDocument = function () {
     // заменяем объект на id

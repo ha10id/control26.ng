@@ -5,6 +5,7 @@
   var bodyParser      = require('body-parser');
   var methodOverride  = require('method-override');
   var morgan          = require('morgan');
+  var multipart       = require('connect-multiparty');
 
   var routes = require('./routes');
   var api    = require('./routes/api');
@@ -28,6 +29,8 @@
   app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
   app.use(bodyParser.json());                                     // parse application/json
   app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+  app.use(bodyParser.json({ uploadDir: 'public/uploads' }));
+  app.use(multipart({uploadDir: 'public/uploads'}));
   app.use(methodOverride());
 
   var env = process.env.NODE_ENV || 'development';
@@ -63,6 +66,8 @@
   app.post('/api/post', api.addPost);
   app.put('/api/post/:id', api.editPost);
   app.delete('/api/post/:id', api.deletePost);
+
+  app.post('/api/image/upload', api.imageUpload);
 
   app.get('*', routes.index);
 

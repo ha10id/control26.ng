@@ -2,6 +2,17 @@
 .form-group
     input#lat(ng-hide="invisible", type="text", name='latitude', ng-model="form.latitude")
     input#lng(ng-hide="invisible", type="text", name='longitude', ng-model="form.longitude")
+
+//- .form-group
+//-     h4 Upload on file select
+//-     button(type="file", ngf-select="uploadFiles($file, $invalidFiles)",
+//-       accept="image/*", ngf-max-height="1000", ngf-max-size="1MB") Select File
+//-     br
+//-     p File:
+//-     div(style="font:smaller") {{f.name}} {{errFile.name}} {{errFile.$error}} {{errFile.$errorParam}}
+//-         span.progress(ng-show="f.progress >= 0")
+//-             div(style="width:{{f.progress}}%", ng-bind="f.progress + '%'")
+//-     {{errorMsg}}
 .form-group
     h2 {{form.name}}
 .form-group
@@ -19,6 +30,15 @@
         ya-map(ya-zoom="17", ya-center="{{map.center}}")
             ya-geo-object(ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
     #RightBox.col-md-4
+        .row
+            .col-md-6(style="padding: 2px 2px 2px 2px", ng-repeat="image in form.images" )
+                img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%")
+        .row(style="padding: 5px 5px 0 5px", ng-show="form.images.length > 3")
+            p(align="center") Можно загрузить не более 4-х изображений. Удалить изображение можно нажав правую кнопку мыши на нём.
+        .row(style="padding: 5px 5px 0 5px", ng-show="form.images.length < 4")
+            //- button.btn.btn-info.form-control загрузить изображение
+            button.btn.btn-info.form-control(type="file", ngf-select="uploadFiles($file, $invalidFiles)",
+                accept="image/*", ngf-max-height="1000", ngf-max-size="1MB")  загрузить изображение
 .form-group
     label(for='description') описание:
     textarea.form-control(ng-model='form.description', rows='5')
