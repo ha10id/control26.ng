@@ -1,4 +1,3 @@
-'use strics';
 // function ModalCtrl($uibModal, $log) {
 //   var $ctrl = this;
 //   $ctrl.animationsEnabled = true;
@@ -29,8 +28,11 @@
 
 // главная страница
 function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
+  'use strict';
+  // подготовим пагинатор
   $scope.currentPage = 0;
   $scope.pageSize = 10;
+  $scope.filterDocuments = [];
   // заливаем объекты Documents и Cate скоуп
   $scope.documents = Documents.query();
   $scope.categories = Categories.query();
@@ -46,11 +48,11 @@ function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
 }
 // просмотр обращения
 function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories) {
+  'use strict';
   var data = Documents.get({id: $routeParams.id}, function(){
     $scope.document = data;
-    // $scope.document.images[0] = "/img/epmty.png";
     $scope.category =  Categories.get({id: data.category});
-    // широта latitude (45)
+    // широта latitude (45) долгота longitude (41)
     $scope.map = {
       center: [data.longitude, data.latitude],
       point: { geometry: {type: "Point",coordinates: [data.longitude, data.latitude]}},
@@ -62,9 +64,9 @@ function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories
     $location.url('/');
   };
 }
-
 // редактирование обращения
-function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories, Upload, $timeout) {
+function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories, Upload, $timeout, $log) {
+  'use strict';
   $scope.invisible = true;
   $scope.form = {};
   // вешаем событие на dragend маркера
@@ -73,7 +75,7 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
     ymaps.geocode([coords[0], coords[1]], { results: 1 }).then(function (res) {
         // Выбираем первый результат геокодирования.
         var firstGeoObject = res.geoObjects.get(0);
-        var coords = firstGeoObject.geometry.getCoordinates();
+        coords = firstGeoObject.geometry.getCoordinates();
         // alert(firstGeoObject.geometry.getCoordinates());
         // Задаем адрес из результата геокодирования.
         $scope.$apply(function(){
@@ -81,15 +83,13 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
             $scope.form.latitude = coords[1];
             $scope.form.longitude = coords[0];
             $scope.form.address = firstGeoObject.properties.get('text');
-        });
-    }, function (err) {
+          });
+      }, function (err) {
         // Если геокодирование не удалось, сообщаем об ошибке.
         alert(err.message);
-    });
+      });
   };
 
-  $scope.form.latitude = $routeParams.latitude;
-  $scope.form.longitude = $routeParams.longitude;
 
   Documents.get({id: $routeParams.id}, function(data){
     $scope.form = data;
@@ -101,37 +101,37 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
       zoom: 17
     };
   });
-  // aeyrwbz pfuheprb bpj,hf;tybq
+  // загрузка фоток
   $scope.uploadFiles = function(file, errFiles) {
-    $scope.f = file;
-    $scope.errFile = errFiles && errFiles[0];
+    $scope.form.file = file;
+    $scope.form.errFile = errFiles && errFiles[0];
     if (file) {
-      file.upload = Upload.upload({
-        url: '/api/image/upload',
-        data: {document_id: $routeParams.id, file: file}
-
-      });
-
-      file.upload.then(function (response) {
-        $timeout(function () {
-          file.result = response.data;
-          Documents.get({id: $routeParams.id}, function(data){
-            $scope.form = data;
-            $scope.$apply();
-          });
-        });
-      }, function (response) {
-        if (response.status > 0)
-          $scope.errorMsg = response.status + ': ' + response.data;
-      }, function (evt) {
-        file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-        //$scope.$apply();
-      });
-
-      // file.upload.finally(cb) {
-      //   $scope.document.images[0] = file.path;
-      // };
+      $scope.upload($scope.form.file);
+      $log.warn("++++++++++++++++++++++++++++");
+      $log.info("scope is: ", $scope)
     }
+    if (errFiles) {
+      $log.error("слишком большой файл");
+    }
+  };
+  // upload on file select or drop
+  $scope.upload = function (file) {
+      Upload.upload({
+          url: '/api/image/upload',
+          data: {document_id: $routeParams.id, file: $scope.form.file}
+      }).then(function (resp) {
+          $log.debug('Success ' + resp.config.data.file.name + ' uploaded. Response: ' + JSON.stringify(resp.data));
+          $timeout(function () {
+            $scope.$apply(function(){
+              $scope.form = resp.data;
+            });
+          }, 1000);
+      }, function (resp) {
+          $log.debug('Error status: ' + resp.status);
+      }, function (evt) {
+          var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+          $log.debug('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+      });
   };
   // функция обновления документа (кнопка "сохранить")
   $scope.editDocument = function () {
@@ -153,23 +153,23 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
   };
 
   $scope.beforeInit = function(){
-      ymaps.geocode([$routeParams.longitude, $routeParams.latitude], { results: 1 }).then(function (res) {
+    ymaps.geocode([$routeParams.longitude, $routeParams.latitude], { results: 1 }).then(function (res) {
           // Выбираем первый результат геокодирования.
           var firstGeoObject = res.geoObjects.get(0);
           // Задаем адрес из результата геокодирования.
           $scope.$apply(function(){
               // $scope.center = firstGeoObject.geometry.getCoordinates();
               $scope.form.address = firstGeoObject.properties.get('text');
-          });
-      }, function (err) {
+            });
+        }, function (err) {
           // Если геокодирование не удалось, сообщаем об ошибке.
           alert(err.message);
-      });
+        });
   };
   // вешаем событие на dragend маркера
   $scope.dragEnd = function(e){
     var coords = e.get('target').geometry.getCoordinates();
-      ymaps.geocode([coords[0], coords[1]], { results: 1 }).then(function (res) {
+    ymaps.geocode([coords[0], coords[1]], { results: 1 }).then(function (res) {
           // Выбираем первый результат геокодирования.
           var firstGeoObject = res.geoObjects.get(0);
           var coords = firstGeoObject.geometry.getCoordinates();
@@ -180,13 +180,14 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
               $scope.form.latitude = coords[1];
               $scope.form.longitude = coords[0];
               $scope.form.address = firstGeoObject.properties.get('text');
-          });
-      }, function (err) {
+            });
+        }, function (err) {
           // Если геокодирование не удалось, сообщаем об ошибке.
           alert(err.message);
-      });
-    };
+        });
+  };
 
+  // координаты обращения
   $scope.form.latitude = $routeParams.latitude;
   $scope.form.longitude = $routeParams.longitude;
 
@@ -202,16 +203,16 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
     }, function (err) {
           // сообщаем об ошибке.
           alert(err.message);
-    });
+        });
   };
 }
 
 // главная страница личного кабинета
 function PersonalAreaCtrl($scope, $http, $location, $routeParams, Categories) {
   $http.get('/api/documents').
-    success(function(data, status, headers, config) {
-      $scope.currentPage = 0;
-      $scope.pageSize = 10;
+  success(function(data, status, headers, config) {
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
       // заливаем результат запроса в скоуп
       $scope.documents = data;
       $scope.categories = Categories.query();
@@ -239,45 +240,45 @@ function AddPostCtrl($scope, $http, $location) {
   $scope.form = {};
   $scope.submitPost = function () {
     $http.post('/api/post', $scope.form).
-      success(function(data) {
-        $location.path('/');
-      });
+    success(function(data) {
+      $location.path('/');
+    });
   };
 }
 
 function ReadPostCtrl($scope, $http, $routeParams) {
   $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.post = data.post;
-    });
+  success(function(data) {
+    $scope.post = data.post;
+  });
 }
 
 function EditPostCtrl($scope, $http, $location, $routeParams) {
   $scope.form = {};
   $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.form = data.post;
-    });
+  success(function(data) {
+    $scope.form = data.post;
+  });
 
   $scope.editPost = function () {
     $http.put('/api/post/' + $routeParams.id, $scope.form).
-      success(function(data) {
-        $location.url('/readPost/' + $routeParams.id);
-      });
+    success(function(data) {
+      $location.url('/readPost/' + $routeParams.id);
+    });
   };
 }
 
 function DeletePostCtrl($scope, $http, $location, $routeParams) {
   $http.get('/api/post/' + $routeParams.id).
-    success(function(data) {
-      $scope.post = data.post;
-    });
+  success(function(data) {
+    $scope.post = data.post;
+  });
 
   $scope.deletePost = function () {
     $http.delete('/api/post/' + $routeParams.id).
-      success(function(data) {
-        $location.url('/');
-      });
+    success(function(data) {
+      $location.url('/');
+    });
   };
 
   $scope.home = function () {

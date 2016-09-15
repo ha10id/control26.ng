@@ -1,22 +1,18 @@
 var gm              = require('gm');
 var fs              = require('fs');
+
 // grab the document model we just created
 var Document = require('./models/Document.js');
 var Category = require('./models/Category.js');
 
-// initialize our faux database
-var data = {
-  "posts": [
-  {
-    "title": "Lorem ipsum",
-    "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-  },
-  {
-    "title": "Sed egestas",
-    "text": "Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing, commodo quis, gravida id, est. Sed lectus."
-  }
-  ]
+var ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return '_' + Math.random().toString(36).substr(2, 9);
 };
+
+
 //========================================================
 // Documents
 // список документов +
@@ -121,30 +117,57 @@ exports.category = function (req, res) {
 //========================================================
 // загрузка картинок
 exports.imageUpload = function (req, res, next) {
+  console.log("-----------------------------------------");
+  console.log("загузка изображения в документ: ", req.body.document_id, "\n");
   var file = req.files.file;
-  console.log(file.name); //original name (ie: sunset.png)
-  console.log(file.path); //tmp path (ie: /tmp/12345-xyaz.png)
-  console.log(file.type); //tmp path (ie: /tmp/12345-xyaz.png)
-  console.log(req.body.document_id);
+  console.log("имя файла: ", file.name); //original name (ie: sunset.png)
+  // console.log(file.path); //tmp path (ie: /tmp/12345-xyaz.png)
+  // console.log(file.type); //tmp path (ie: /tmp/12345-xyaz.png)
+  // console.log(req.body.document_id);
   var tmp_path = file.path;
-  var target_path = 'public/uploads/' + file.name;
-        fs.renameSync(tmp_path, target_path, function(err) {
+  var fileName = ID();
+  var target_path = 'public/uploads/' + fileName;
+    fs.renameSync(tmp_path, target_path, function(err) {
+      if (err) console.error(err.stack);
+    });
+    // заделаем тумбочки
+    gm(target_path)
+        .resize(160, 130, "!")
+        .noProfile()
+        .write('public/uploads/thumbs/' + fileName, function(err) {
             if (err) console.error(err.stack);
         });
-        // заделаем тумбочки
-        gm(target_path)
-            .resize(160, 130, "!")
-            .noProfile()
-            .write('public/uploads/thumbs/' + file.name, function(err) {
-                if (err) console.error(err.stack);
-            });
-        // ищем текущий документ чтобы записать в него адрес фотки
-        Document.findOne({ _id: req.body.document_id }, function(err, d) {
-            if (!d) return next(new NotFound('Document not found'));
-            d.images.push(file.name);
-            d.save();
-            // console.log(d.images);
-        });
+    // ищем текущий документ чтобы записать в него адрес фотки
+    Document.findOne({ _id: req.body.document_id }, function(err, d) {
+        if (!d) return next(new NotFound('Document not found'));
+        console.log("изображений в документе: ", d.images.length);
+
+        if (d.images.length < 4) {
+          d.images.push(fileName);
+          d.save();
+          console.log("файл добавлен в конец документа");
+        } else {
+          // d.images.pop(-1);
+          var oldFile = d.images[0];
+          d.images.pull(oldFile); // удаляем первую картинку
+          d.images.push(fileName); // сохраняем в конец массива
+          fs.unlink('public/uploads/thumbs/' + oldFile, function(err) {
+             if (err) {
+                 return console.error(err);
+             }
+          });
+          fs.unlink('public/uploads/' + oldFile, function(err) {
+             if (err) {
+                 return console.error(err);
+             }
+          });
+
+          console.log("удален файл: ", oldFile );
+          d.save();
+        }
+        console.log(d);
+        res.json(d);
+    });
 };
 //========================================================
 // GET
