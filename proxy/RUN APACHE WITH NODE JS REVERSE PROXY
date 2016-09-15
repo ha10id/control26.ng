@@ -1,0 +1,83 @@
+RUN APACHE WITH NODE JS REVERSE PROXY – USING REDBIRD
+
+if you are learning or using nodejs, most of you might encounter the problem of running nodejs with apache or nginx. there are several solutions for this issue, with several pros and cons for each solution. for this article i’ll only consider we have a web server with apache.
+
+some of suggested solutions are:
+
+use a reverse proxy with apache (with mod_proxy) to serve nodejs apps
+disable apache and run nodejs on port 80 😀
+run nodejs on port 80 with a reverse proxy configured on nodejs
+if you go with first method, you are really wasting the power of nodejs. but if you do a simple google search on this, lots of articles will suggest you or show you to go with this approach. i am not going to explain this in depth. following extracted text will explain what is the downside of this approach very well. :)
+
+you just bought a brand new ferrari and you want to take it for a spin on the highway.. so you go there.. but there is a big fat truck in front of you that only goes 50mph and there is no way to get passed it.
+
+that is basically what you are doing if you put apache (truck) in front of nodejs (ferarri) this defeats one of the main purposes of using nodejs having a FAST evented machine.. which does not allocate threads for requests.
+
+in the second approach, the only downside is you will lost your apache server. so if you run some CMS es like wordpress / drupal you have to find other alternative options like our 3rd solution.
+
+so the 3rd option, running a reverse proxy with nodejs. this idea is really crazy. 😀 following are the steps to do this.
+
+first we have to  make apache run on different port other than port 80.
+then configure nodejs to run on port 80.
+create the proxy script with redbird.
+configure PM2 to auto the start proxy server.
+and we are done.
+
+step 1: make apache run on different port
+
+first open ports.conf in /etc/apache2/ directory.
+
+sudo nano /etc/apache2/ports.conf
+then change Listen 80 to Listen 8080
+so the ports.conf will look like following.
+
+Listen 8080
+
+<IfModule ssl_module>
+	Listen 8443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+	Listen 8443
+</IfModule>
+
+next open 000-default.conf in /etc/apache2/sites-available directory.
+change <VirtualHost *:80> to the previously given port as <VirtualHost *:8080> and restart the apache server to reflect the changes.
+
+sudo service apache2 restart
+step 2: configure nodejs to run on port 80
+
+to run nodejs on port 80, the script will need sudo permission. but there are several ways to do this without sudo permission, which is more safer. we can bind nodejs to listen on lower ports (1 – 1024) by following commands.
+
+sudo apt-get install libcap2-bin
+sudo setcap cap_net_bind_service=+ep /usr/local/bin/node
+once you do this, we can listen to all lower ports including port 80 via our nodejs app.
+
+step 3: create the proxy script
+
+now we have to write the reverse proxy script. for an example let’s say we have a wordpress blog running with apache on http://mydomain.me:8080/blog/ (in the first step, me made apache run on port 80) and a nodejs app running on http://mydomain.me:3000/ and we want to make both of these apps available on port 80.
+
+to write the proxy script we will be using a npm module called redbird. we can begin writing the script as follows.
+
+
+
+var proxy = require('redbird')({port: 80, xfwd: false);
+
+proxy.register("mydomain.me/blog", "http://mydomain.me:8080/blog");
+proxy.register("mydomain.me", "http://mydomain.me:3000");
+note than, this reverse proxy script is set to run on port 80. now if you run this script with node proxy.js we’ll be able to access our blog via http://mydomain.me/blog/ and our node app on port 3000 via http://mydomian.me/. :)
+
+step 4: configure PM2 to auto start the proxy server
+
+next step is to making this proxy script auto-start when the system boots. there is a great tool which will do this job for us called PM2. install and configure it if you haven’t already used it.
+
+
+
+sudo npm install -g pm2
+pm2 startup ubuntu
+this last line will output a command for you to run on the terminal to make PM2 auto start on system boot. run it and you are almost done.
+
+next step would be adding our proxy script to process list of PM2. then PM2 will take care of our script for us.
+
+pm2 start proxy.js
+also via PM2 we can start / stop / restart the process like we use services in linux.
