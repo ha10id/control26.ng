@@ -78,11 +78,14 @@
             strong
               a(href='readDocument/{{ document.id }}', id='{{ document.id }}') {{ document.title }}
         .panel-body
-            p адрес: {{document.address}}
-            p {{document.description}}
-            a(href='editDocument/{{document.id}}') Edit
-        .panel-footer
-            span.label.label-default создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
+            .col-sm-2
+              | создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
+            .col-sm-10
+              p адрес: {{document.address}}
+              p {{document.description}}
+              a(href='editDocument/{{document.id}}') Edit
+        //- .panel-footer
+        //-     span.label.label-default создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
 .row
 .form-group
   .btn-group.btn-group-justified

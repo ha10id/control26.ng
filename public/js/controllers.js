@@ -89,12 +89,14 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
         alert(err.message);
       });
   };
-
-
+  // берем документ из базы
   Documents.get({id: $routeParams.id}, function(data){
     $scope.form = data;
+    // категории
     $scope.categories = Categories.query();
+    // категория в документе
     $scope.category =  Categories.get({id: data.category});
+    // подготавливаем значения для карты
     $scope.map = {
       center: [data.longitude, data.latitude],
       point: { geometry: {type: "Point",coordinates: [data.longitude, data.latitude]}},
@@ -135,7 +137,7 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
   };
   // функция обновления документа (кнопка "сохранить")
   $scope.editDocument = function () {
-    // заменяем объект на id
+    // категория: заменяем объект на id
     $scope.form.category = $scope.category._id;
     Documents.update({id: $routeParams.id}, $scope.form);
     $location.url('/readDocument/' + $routeParams.id);
@@ -143,15 +145,18 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
 }
 // добавление обращения
 function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories) {
-  // alert("долгота: " + $routeParams.longitude + ", широта: " + $routeParams.latitude);
+  // $log.info("долгота: " + $routeParams.longitude + ", широта: " + $routeParams.latitude);
+  // скрытие полей координат на форме (false для отладки)
   $scope.invisible = true;
+  // чистим поля формы
   $scope.form = {};
+  // устанавливаем центр и координаты метки
   $scope.map = {
     center: [$routeParams.longitude, $routeParams.latitude],
     point: { geometry: {type: "Point",coordinates: [$routeParams.longitude, $routeParams.latitude]}},
     zoom: 17
   };
-
+  // предварительная инициализация карты. по точке запрашиваем геоданные
   $scope.beforeInit = function(){
     ymaps.geocode([$routeParams.longitude, $routeParams.latitude], { results: 1 }).then(function (res) {
           // Выбираем первый результат геокодирования.
@@ -186,14 +191,14 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
           alert(err.message);
         });
   };
-
+  // заполняем форму
   // координаты обращения
   $scope.form.latitude = $routeParams.latitude;
   $scope.form.longitude = $routeParams.longitude;
-
+  // список категорий
   $scope.categories = Categories.query();
   $scope.category =  [{_id: 0, name: "выберите категорию"}];
-
+  // функция сохранения обращения
   $scope.submitDocument = function () {
     $scope.form.category = $scope.category._id;
     var newDocument = new Documents($scope.form);
