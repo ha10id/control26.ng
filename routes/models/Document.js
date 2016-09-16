@@ -29,6 +29,23 @@ Document.virtual('id')
         return this._id.toHexString();
 });
 
+Document.virtual('istatus')
+    .get(function() {
+        var retValue = "не определено";
+        switch( this.status ) {
+            case 0:
+                retValue = "новое";
+                break;
+            case 1:
+                retValue = "в работе";
+                break;
+            case 2:
+                retValue = "закрыто";
+                break;
+        }
+        return retValue;
+});
+
 Document.virtual('geoObject')
     .get(function() {
         var go = {

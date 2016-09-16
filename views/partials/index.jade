@@ -62,8 +62,11 @@
         ul.dropdown-menu(uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
           //- li(role="menuitem")
           input.form-control(id="iDatafilter", name="idatafilter", type="text", ng-model="dataFrom", placeholder="строка поиска...")
-
-        // фильтр поиска в обращениях
+    // test button
+    .col-sm-2(style="margin: 0; padding: 0;")
+      .btn-group.btn-group-justified(uib-dropdown, dropdown-append-to-body)
+        #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle, ng-click="doDialog()") Add Alert
+    // фильтр поиска в обращениях
     .col-sm-2(style="margin: 0 0 0 4px; padding: 0; float: right;")
         input.form-control(uib-dropdown-search,id="ifilter", name="ifilter", type="text", ng-model="query", placeholder="строка поиска...")
    //-  ul.filter-menu
@@ -79,7 +82,10 @@
               a(href='readDocument/{{ document.id }}', id='{{ document.id }}') {{ document.title }}
         .panel-body
             .col-sm-2
-              | создан: {{document.datestamp | date}} &nbsp автор: {{document.name}}
+              | создан: {{document.datestamp | date}} &nbsp
+              | автор: {{document.name}} &nbsp
+              p
+                span.label.label-default статус: {{document.astatus}}
             .col-sm-10
               p адрес: {{document.address}}
               p {{document.description}}

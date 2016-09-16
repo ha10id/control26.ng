@@ -6,6 +6,7 @@ var Document = require('./models/Document.js');
 var Category = require('./models/Category.js');
 
 var ID = function () {
+  'use strict';
   // Math.random should be unique because of its seeding algorithm.
   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
   // after the decimal.
@@ -17,40 +18,46 @@ var ID = function () {
 // Documents
 // список документов +
 exports.documents = function (req, res) {
+  'use strict';
   Document.find(function(err, documents) {
-      if (err)
-        res.send(err);
-      documents = documents.map(function(data) {
-        return {
-          id: data.id,
-          name: data.name,
-          title: data.title,
-          address: data.address,
-          latitude: data.latitude,
-          longitude: data.longitude,
-          description: data.description,
-          status: data.status,
-          datestamp: data.datestamp,
-          geoObject: data.geoObject
-        };
-      });
+    if (err) {
+      res.send(err);
+    }
+    documents = documents.map(function(data) {
+      return {
+        id: data.id,
+        name: data.name,
+        title: data.title,
+        address: data.address,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        description: data.description,
+        status: data.status,
+        astatus: data.istatus,
+        datestamp: data.datestamp,
+        geoObject: data.geoObject
+      };
+    });
       res.json(documents); // return all documents in JSON format
     }).sort({datestamp: -1});
 };
 // get one +
 exports.document = function (req, res) {
+  'use strict';
   var id = req.params.id;
   console.log("-----------------------------------------");
   console.log('api get document :', id);
   Document.findOne({ _id : id }, function(err, document) {
-    if (err)
+    if (err) {
       res.send(err);
+    }
     console.log(document);
     res.json(document); // return one document in JSON format
   }).populate("_comments");
 };
 // POST
 exports.addDocument = function (req, res) {
+  'use strict';
   // data.posts.push(req.body);
   console.log("-----------------------------------------");
   console.log("создание документа: \n");
@@ -64,20 +71,23 @@ exports.addDocument = function (req, res) {
     console.log(newDocument);
     var data = newDocument.toObject();
     data.id = data._id;
-    if (err)
+    if (err) {
       res.send(err);
+    }
     res.json(data);
   });
 };
 // put document (update) +50%
 exports.editDocument = function (req, res) {
+  'use strict';
   var id = req.params.id;
   console.log("-----------------------------------------");
   console.log("обновление документа: ", id, "\n");
   console.dir(req.body);
   Document.findOne({ _id : id }, function(err, document) {
-    if (err)
+    if (err) {
       res.send(false);
+    }
     // изменяем поля
     document.title = req.body.title;
     document.description = req.body.description;
@@ -87,36 +97,42 @@ exports.editDocument = function (req, res) {
     document.address = req.body.address;
     // сохраняем отредактированный документ
     document.save(function(err) {
-      if (err)
+      if (err) {
        res.send(false);
-    res.json(true);
-    });
+     }
+     res.json(true);
+   });
   });
 };
 //========================================================
 // Categories
 // get all +
 exports.categories = function (req, res) {
-    console.log('api get categories', req.params);
-    Category.find(function(err, categories) {
-      if (err)
-        res.send(err);
-      res.json(categories); // return all categories in JSON format
-    });
+  'use strict';
+  console.log("-----------------------------------------");
+  console.log('api get categories', req.params);
+  Category.find(function(err, categories) {
+    if (err) {
+      res.send(err);
+    }
+    res.json(categories); // return all categories in JSON format
+  });
 };
 // get one +
 exports.category = function (req, res) {
   var id = req.params.id;
   console.log('api get category :', id);
   Category.findOne({ _id : id }, function(err, category) {
-    if (err)
+    if (err) {
       res.send(err);
+    }
     res.json(category); // return document in JSON format
   });
 };
 //========================================================
 // загрузка картинок
 exports.imageUpload = function (req, res, next) {
+  'use strict';
   console.log("-----------------------------------------");
   console.log("загузка изображения в документ: ", req.body.document_id, "\n");
   var file = req.files.file;
@@ -127,48 +143,50 @@ exports.imageUpload = function (req, res, next) {
   var tmp_path = file.path;
   var fileName = ID();
   var target_path = 'public/uploads/' + fileName;
-    fs.renameSync(tmp_path, target_path, function(err) {
-      if (err) console.error(err.stack);
-    });
+  fs.renameSync(tmp_path, target_path, function(err) {
+    if (err) {
+      console.error(err.stack);
+    }
+  });
     // заделаем тумбочки
     gm(target_path)
-        .resize(160, 130, "!")
-        .noProfile()
-        .write('public/uploads/thumbs/' + fileName, function(err) {
-            if (err) console.error(err.stack);
-        });
+    .resize(160, 130, "!")
+    .noProfile()
+    .write('public/uploads/thumbs/' + fileName, function(err) {
+      if (err) console.error(err.stack);
+    });
     // ищем текущий документ чтобы записать в него адрес фотки
     Document.findOne({ _id: req.body.document_id }, function(err, d) {
-        if (!d) return next(new NotFound('Document not found'));
-        console.log("изображений в документе: ", d.images.length);
+      if (!d) return next(new NotFound('Document not found'));
+      console.log("изображений в документе: ", d.images.length);
 
-        if (d.images.length < 4) {
-          d.images.push(fileName);
-          d.save();
-          console.log("файл добавлен в конец документа");
-        } else {
+      if (d.images.length < 4) {
+        d.images.push(fileName);
+        d.save();
+        console.log("файл добавлен в конец документа");
+      } else {
           // d.images.pop(-1);
           var oldFile = d.images[0];
           d.images.pull(oldFile); // удаляем первую картинку
           d.images.push(fileName); // сохраняем в конец массива
           fs.unlink('public/uploads/thumbs/' + oldFile, function(err) {
-             if (err) {
-                 return console.error(err);
-             }
-          });
+           if (err) {
+             return console.error(err);
+           }
+         });
           fs.unlink('public/uploads/' + oldFile, function(err) {
-             if (err) {
-                 return console.error(err);
-             }
-          });
+           if (err) {
+             return console.error(err);
+           }
+         });
 
           console.log("удален файл: ", oldFile );
           d.save();
         }
         console.log(d);
         res.json(d);
-    });
-};
+      });
+  };
 //========================================================
 // GET
 exports.posts = function (req, res) {

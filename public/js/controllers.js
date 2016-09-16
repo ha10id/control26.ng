@@ -1,24 +1,3 @@
-// function ModalCtrl($uibModal, $log) {
-//   var $ctrl = this;
-//   $ctrl.animationsEnabled = true;
-//   $ctrl.open = function (size) {
-//     var modalInstance = $uibModal.open({
-//       animation: $ctrl.animationsEnabled,
-//       ariaLabelledBy: 'modal-title',
-//       ariaDescribedBy: 'modal-body',
-//       templateUrl: 'myModalContent.html',
-//       controller: 'ModalInstanceCtrl',
-//       controllerAs: '$ctrl',
-//       size: size,
-//       resolve: {
-//         items: function () {
-//           return $ctrl.items;
-//         }
-//       }
-//     });
-//   };
-// }
-
 // использование промисов (устарело)
 // var query = UserService.query();
 // query.$promise.then(function(data) {
@@ -27,7 +6,7 @@
 // });
 
 // главная страница
-function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
+function IndexCtrl($scope, $location, $routeParams, $uibModal, Documents, Categories) {
   'use strict';
   // подготовим пагинатор
   $scope.currentPage = 0;
@@ -41,6 +20,24 @@ function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
     var coords = e.get('coords');
     $location.url('/addDocument/' + coords);
   };
+
+  // обработка ошибок
+  $scope.showErrors = false;
+  $scope.errors = [];
+
+  // $scope.doDialog = function(place) {
+  //   var title = 'Confirm';
+  //   var msg = 'Do you really want to delete this place?';
+  //   var btns = [{result:'no', label: 'No'}, {result:'yes', label: 'Yes', cssClass: 'btn-danger'}];
+
+  //   $dialog.messageBox(title, msg, btns)
+  //       .open()
+  //       .then(function(result){
+  //           if (result === 'yes') {
+  //               $scope.delete(place);
+  //           }
+  //       });
+  //   };
   // посчитаем количество страниц
   $scope.numberOfPages=function(){
     return Math.ceil($scope.filterDocuments.length/$scope.pageSize);
@@ -118,22 +115,22 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
   };
   // upload on file select or drop
   $scope.upload = function (file) {
-      Upload.upload({
-          url: '/api/image/upload',
-          data: {document_id: $routeParams.id, file: $scope.form.file}
-      }).then(function (resp) {
-          $log.debug('Success ' + resp.config.data.file.name + ' uploaded. Response: ' + JSON.stringify(resp.data));
-          $timeout(function () {
-            $scope.$apply(function(){
-              $scope.form = resp.data;
-            });
-          }, 1000);
-      }, function (resp) {
-          $log.debug('Error status: ' + resp.status);
-      }, function (evt) {
-          var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-          $log.debug('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-      });
+    Upload.upload({
+      url: '/api/image/upload',
+      data: {document_id: $routeParams.id, file: $scope.form.file}
+    }).then(function (resp) {
+      $log.debug('Success ' + resp.config.data.file.name + ' uploaded. Response: ' + JSON.stringify(resp.data));
+      $timeout(function () {
+        $scope.$apply(function(){
+          $scope.form = resp.data;
+        });
+      }, 1000);
+    }, function (resp) {
+      $log.debug('Error status: ' + resp.status);
+    }, function (evt) {
+      var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+      $log.debug('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+    });
   };
   // функция обновления документа (кнопка "сохранить")
   $scope.editDocument = function () {
@@ -145,6 +142,7 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
 }
 // добавление обращения
 function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories) {
+  'use strict';
   // $log.info("долгота: " + $routeParams.longitude + ", широта: " + $routeParams.latitude);
   // скрытие полей координат на форме (false для отладки)
   $scope.invisible = true;
@@ -204,7 +202,7 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
     var newDocument = new Documents($scope.form);
     // alert(newDocument.title);
     newDocument.$save().then(function (data) {
-      $location.url('/readDocument/' + data.id);
+      $location.url('/editDocument/' + data.id);
     }, function (err) {
           // сообщаем об ошибке.
           alert(err.message);
@@ -214,10 +212,9 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
 
 // главная страница личного кабинета
 function PersonalAreaCtrl($scope, $http, $location, $routeParams, Categories) {
-  $http.get('/api/documents').
-  success(function(data, status, headers, config) {
-    $scope.currentPage = 0;
-    $scope.pageSize = 10;
+  'use strict';
+  $scope.currentPage = 0;
+  $scope.pageSize = 10;
       // заливаем результат запроса в скоуп
       $scope.documents = data;
       $scope.categories = Categories.query();
@@ -230,8 +227,7 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, Categories) {
       $scope.numberOfPages=function(){
         return Math.ceil($scope.documents.length/$scope.pageSize);
       };
-    });
-}
+    }
 
 // function IndexCtrl($scope, $http) {
 //   $http.get('/api/posts').
@@ -242,6 +238,7 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, Categories) {
 
 
 function AddPostCtrl($scope, $http, $location) {
+  'use strict';
   $scope.form = {};
   $scope.submitPost = function () {
     $http.post('/api/post', $scope.form).
@@ -252,6 +249,7 @@ function AddPostCtrl($scope, $http, $location) {
 }
 
 function ReadPostCtrl($scope, $http, $routeParams) {
+  'use strict';
   $http.get('/api/post/' + $routeParams.id).
   success(function(data) {
     $scope.post = data.post;
@@ -259,6 +257,7 @@ function ReadPostCtrl($scope, $http, $routeParams) {
 }
 
 function EditPostCtrl($scope, $http, $location, $routeParams) {
+  'use strict';
   $scope.form = {};
   $http.get('/api/post/' + $routeParams.id).
   success(function(data) {
@@ -274,6 +273,7 @@ function EditPostCtrl($scope, $http, $location, $routeParams) {
 }
 
 function DeletePostCtrl($scope, $http, $location, $routeParams) {
+  'use strict';
   $http.get('/api/post/' + $routeParams.id).
   success(function(data) {
     $scope.post = data.post;

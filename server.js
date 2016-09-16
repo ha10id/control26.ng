@@ -13,8 +13,6 @@
   var path   = require('path');
 
 
-
-
 // configuration ===========================================
   var db = require('./config/db');
   mongoose.Promise = global.Promise; // remove warning DeprecationWarning: Mongoose: mpromise ...
