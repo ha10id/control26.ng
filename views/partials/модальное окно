@@ -1,0 +1,24 @@
+Чтобы открыть модальное окно не обьязательно (не нужно) поменять route. Поэтому убираем вот следующий код:
+
+.when('/modal/:name',{
+     controller: 'ModalCtrl'
+})
+По сути вам нужно одну ссылку, которую при нажатии вызывает функцию для открытия модального окна. Типо того:
+
+<button type="button" ng-click="openModal(name)">Открыть окно</button>
+Вам нужно модуль для модальных окон. Берём например ui-bootstrap. В index.html добавить:
+
+bootstrap.css
+ui-bootstrap-tpls.js (ui-bootstrap с темплетамы)
+В декларации приложения добавить модуль 'ui.bootstrap':
+
+angular.module('myApp', ['ui.bootstrap']);
+В контроллере, внедрить $uibModal и декларировать функцию для открытия окна:
+
+$scope.openModal = function (name) {
+    $uibModal.open({
+        templateUrl: 'template/modal/' + name + '.tpl',
+        controller: 'ModalCtrl'
+    }
+};
+Остаётся написать ModalCtrl в зависимости от того, что будет в вашем окне.

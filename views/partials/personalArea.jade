@@ -1,3 +1,43 @@
-.row
-  | &nbsp
-.form-group
+.jumborton
+    form.tab-form-admin(name="outerForm")
+        uib-tabset(active="activeForm")
+            uib-tab(index="0")
+                //- , heading="мои обращения")
+                uib-tab-heading
+                    | мои обращения
+                ng-form(name="nestedForm")
+                    // список обращений
+                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
+                        div(ng-repeat="document in filterDocuments =(documents | filter:query | filter:iStatus) | startFrom:currentPage*pageSize | limitTo:pageSize")
+                          .panel(ng-class="{ 'panel-success': document.status == 2, 'panel-info': document.status == 1, 'panel-warning': document.status == 0 }")
+                            .panel-heading
+                                strong
+                                  a(href='readDocument/{{ document.id }}', id='{{ document.id }}') {{ document.title }}
+                            .panel-body
+                                .col-sm-2
+                                  | создан: {{document.datestamp | date}} &nbsp
+                                  | автор: {{document.name}} &nbsp
+                                  p
+                                    span.label.label-default статус: {{document.astatus}}
+                                .col-sm-10
+                                  p адрес: {{document.address}}
+                                  p {{document.description}}
+                                  a(href='editDocument/{{document.id}}') Edit
+            uib-tab(index="1")
+                uib-tab-heading
+                    | мой профиль
+                ng-form(name="profileForm")
+                    //- .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
+                    .form-group
+                        label фамилия:
+                        input.form-control(type="text", required, ng-model="model.lastName")
+                    .form-group
+                        label имя:
+                        input.form-control(type="text", required, ng-model="model.firstName")
+                    .form-group
+                        label отчество:
+                        input.form-control(type="text", required, ng-model="model.middletName")
+                    .form-group
+                        label электронная почта:
+                        input.form-control(type="text", required, ng-model="model.email")
+

@@ -1,13 +1,15 @@
 // Goverment.js
 // grab the mongoose module
 var mongoose = require('mongoose');
+var User 	 = require('./User');
+
 var Schema   = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 // define our document model
 Goverment = new Schema({
 	'name': String,
-	'worker': { type: Schema.ObjectId, ref: 'User' }
+	'_worker': { type: ObjectId, ref: 'User' }
 });
 
 Goverment.virtual('id')
@@ -20,6 +22,5 @@ Goverment.pre('save', function(next) {
     console.log('ogv presave', this._worker);
     next();
 });
-
 
 module.exports = mongoose.model('Goverment', Goverment);

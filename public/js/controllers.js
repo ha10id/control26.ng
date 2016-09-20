@@ -6,7 +6,7 @@
 // });
 
 // главная страница
-function IndexCtrl($scope, $location, $routeParams, $uibModal, Documents, Categories) {
+function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
   'use strict';
   // подготовим пагинатор
   $scope.currentPage = 0;
@@ -15,6 +15,8 @@ function IndexCtrl($scope, $location, $routeParams, $uibModal, Documents, Catego
   // заливаем объекты Documents и Cate скоуп
   $scope.documents = Documents.query();
   $scope.categories = Categories.query();
+  // $scope.url = $location.url();
+
   // вешаем событие на click на карте
   $scope.mapClick = function(e){
     var coords = e.get('coords');
@@ -44,7 +46,7 @@ function IndexCtrl($scope, $location, $routeParams, $uibModal, Documents, Catego
   };
 }
 // просмотр обращения
-function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories) {
+function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories, $log) {
   'use strict';
   var data = Documents.get({id: $routeParams.id}, function(){
     $scope.document = data;
@@ -58,7 +60,7 @@ function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories
   });
   // событие кнопки "закрыть"
   $scope.closeDocument = function() {
-    $location.url('/');
+    history.back();
   };
 }
 // редактирование обращения
@@ -137,11 +139,11 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
     // категория: заменяем объект на id
     $scope.form.category = $scope.category._id;
     Documents.update({id: $routeParams.id}, $scope.form);
-    $location.url('/readDocument/' + $routeParams.id);
+    history.back();
   };
 }
 // добавление обращения
-function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories) {
+function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories, Upload, $timeout, $log) {
   'use strict';
   // $log.info("долгота: " + $routeParams.longitude + ", широта: " + $routeParams.latitude);
   // скрытие полей координат на форме (false для отладки)
@@ -196,45 +198,114 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories)
   // список категорий
   $scope.categories = Categories.query();
   $scope.category =  [{_id: 0, name: "выберите категорию"}];
+
+  $scope.form.images = [];
+
+  // загрузка фоток
+  $scope.uploadFiles = function(file, errFiles) {
+    $scope.form.file = file;
+    $scope.form.errFile = errFiles && errFiles[0];
+
+    if (file) {
+      $scope.upload($scope.form.file);
+      $log.warn("++++++++++++++++++++++++++++");
+      $log.info("scope is: ", $scope)
+    }
+    if (errFiles) {
+      $log.error("слишком большой файл");
+    }
+  };
+  // upload on file select or drop
+  $scope.upload = function (file) {
+    Upload.upload({
+      url: '/api/image/fakeupload',
+      data: {images: $scope.form.images, file: $scope.form.file}
+    }).then(function (resp) {
+      $log.debug('Success ' + resp.config.data.file.name + ' uploaded. Response: ' + JSON.stringify(resp.data));
+      $timeout(function () {
+        $scope.$apply(function(){
+          var images = $scope.form.images;
+          if (images.length < 4) {
+            images.push(resp.data.fileName);
+          } else {
+            images.shift(); // удаляем первую картинку
+            images.push(resp.data.fileName); // сохраняем в конец массива
+          }
+          $log.info(images);
+          $scope.form.images = images;
+        });
+      }, 1000);
+    }, function (resp) {
+      $log.debug('Error status: ' + resp.status);
+    }, function (evt) {
+      var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+      $log.debug('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+    });
+  };
+
   // функция сохранения обращения
   $scope.submitDocument = function () {
     $scope.form.category = $scope.category._id;
     var newDocument = new Documents($scope.form);
-    // alert(newDocument.title);
-    newDocument.$save().then(function (data) {
-      $location.url('/editDocument/' + data.id);
-    }, function (err) {
-          // сообщаем об ошибке.
-          alert(err.message);
-        });
+
+    newDocument.$save().then(
+      function (data) {
+        $log.info("обращение сохранено");
+        $log.debug(data);
+        $location.url('/');
+      },
+      function (err) {
+            // сообщаем об ошибке.
+            alert(err.message);
+      }
+    );
   };
 }
 
 // главная страница личного кабинета
-function PersonalAreaCtrl($scope, $http, $location, $routeParams, Categories) {
+function PersonalAreaCtrl($scope, $http, $location, $routeParams, Documents, Categories) {
   'use strict';
+  // подготовим пагинатор
   $scope.currentPage = 0;
   $scope.pageSize = 10;
-      // заливаем результат запроса в скоуп
-      $scope.documents = data;
-      $scope.categories = Categories.query();
-      // вешаем событие на click на карте
-      $scope.mapClick = function(e){
-        var coords = e.get('coords');
-        $location.url('/addDocument/' + coords);
-      };
-      // посчитаем количество страниц
-      $scope.numberOfPages=function(){
-        return Math.ceil($scope.documents.length/$scope.pageSize);
-      };
-    }
+  $scope.filterDocuments = [];
+  $scope.url = $location.url();
+  // заливаем объекты Documents и Categories в скоуп
+  $scope.documents = Documents.query();
+  $scope.categories = Categories.query();
 
-// function IndexCtrl($scope, $http) {
-//   $http.get('/api/posts').
-//     success(function(data, status, headers, config) {
-//       $scope.posts = data.posts;
-//     });
-// }
+  // вешаем событие на click на карте
+
+  // посчитаем количество страниц
+  $scope.numberOfPages=function(){
+    return Math.ceil($scope.documents.length/$scope.pageSize);
+  };
+}
+
+function AdminPanelCtrl($scope, Categories, Goverments, Users, $uibModal, $log) {
+  'use strict';
+  $scope.users = Users.query();
+  $scope.categories = Categories.query();
+  $scope.goverments = Goverments.query();
+
+  $scope.status = {
+    isFirstOpen: true,
+    oneAtATime: true,
+    isItemOpen: [true]
+  };
+
+  $scope.users_group = [
+    {id: 0, name: "гость"},{id: 1, name: "пользователь"},{id: 2, name: "модератор"},{id: 3, name: "администратор"}
+  ];
+
+  // функция сохранения обращения
+  $scope.editGoverment = function (ogv_id) {
+    // ngDialog.open({ template: 'popupTmpl.html', className: 'ngdialog-theme-default' });
+    $log.info("delete!", ogv_id);
+  };
+  // $scope.showForm = true;
+  // $log.info("click!", ogv_id);
+}
 
 
 function AddPostCtrl($scope, $http, $location) {

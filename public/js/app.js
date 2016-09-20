@@ -27,6 +27,10 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
     templateUrl: 'partials/personalArea',
     controller: PersonalAreaCtrl
   }).
+  when('/adminPanel', {
+    templateUrl: 'partials/adminPanel',
+    controller: AdminPanelCtrl
+  }).
   when('/addPost', {
     templateUrl: 'partials/addPost',
     controller: AddPostCtrl

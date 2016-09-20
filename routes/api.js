@@ -2,8 +2,10 @@ var gm              = require('gm');
 var fs              = require('fs');
 
 // grab the document model we just created
+var User     = require('./models/User.js')
 var Document = require('./models/Document.js');
 var Category = require('./models/Category.js');
+var Goverment = require('./models/Goverment.js');
 
 var ID = function () {
   'use strict';
@@ -13,6 +15,51 @@ var ID = function () {
   return '_' + Math.random().toString(36).substr(2, 9);
 };
 
+//========================================================
+// Users
+// список пользователей -
+exports.goverments = function (req, res) {
+  'use strict';
+  Goverment.find(function(err, goverments) {
+    if (err) {
+      res.send(err);
+    }
+    goverments = goverments.map(function(data) {
+      return {
+        id: data.id,
+        worker: data._worker,
+        name: data.name
+      };
+    });
+      res.json(goverments); // return all users in JSON format
+    }).sort({name: 1});
+};
+
+//========================================================
+// Users
+// список пользователей -
+exports.users = function (req, res) {
+  'use strict';
+  User.find(function(err, users) {
+    if (err) {
+      res.send(err);
+    }
+    users = users.map(function(data) {
+      return {
+        id: data.id,
+        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        email: data.email,
+        group: data.group,
+        uid: data.uid,
+        regdate: data.regdate
+      };
+    });
+      res.json(users); // return all users in JSON format
+    }).sort({lastName: 1});
+};
 
 //========================================================
 // Documents
@@ -187,6 +234,35 @@ exports.imageUpload = function (req, res, next) {
         res.json(d);
       });
   };
+
+exports.imageFakeUpload = function (req, res, next) {
+  'use strict';
+  console.log("-----------------------------------------");
+  console.log("загузка изображения", "\n");
+  var file = req.files.file;
+  console.log("имя файла: ", file.name); //original name (ie: sunset.png)
+  // console.log(file.path); //tmp path (ie: /tmp/12345-xyaz.png)
+  // console.log(file.type); //tmp path (ie: /tmp/12345-xyaz.png)
+  // console.log(req.body.document_id);
+  var tmp_path = file.path;
+  var fileName = ID();
+  var target_path = 'public/uploads/' + fileName;
+  fs.renameSync(tmp_path, target_path, function(err) {
+    if (err) {
+      console.error(err.stack);
+    }
+  });
+  // заделаем тумбочки
+  gm(target_path)
+  .resize(160, 130, "!")
+  .noProfile()
+  .write('public/uploads/thumbs/' + fileName, function(err) {
+    if (err) console.error(err.stack);
+  });
+  console.log("имя файла на запись: ", fileName);
+  res.json({fileName});
+};
+
 //========================================================
 // GET
 exports.posts = function (req, res) {
