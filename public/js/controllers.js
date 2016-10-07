@@ -6,7 +6,7 @@
 // });
 
 // главная страница
-function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
+function IndexCtrl($scope, $location, $routeParams, Documents, Categories, $log) {
   'use strict';
   // подготовим пагинатор
   $scope.currentPage = 0;
@@ -16,13 +16,14 @@ function IndexCtrl($scope, $location, $routeParams, Documents, Categories) {
   $scope.documents = Documents.query();
   $scope.categories = Categories.query();
   // $scope.url = $location.url();
-
+  $scope.login = function(){
+    $log.info("login click");
+  }
   // вешаем событие на click на карте
   $scope.mapClick = function(e){
     var coords = e.get('coords');
     $location.url('/addDocument/' + coords);
   };
-
   // обработка ошибок
   $scope.showErrors = false;
   $scope.errors = [];
@@ -135,10 +136,32 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
     });
   };
   // функция обновления документа (кнопка "сохранить")
-  $scope.editDocument = function () {
+  $scope.submit = function () {
     // категория: заменяем объект на id
     $scope.form.category = $scope.category._id;
-    Documents.update({id: $routeParams.id}, $scope.form);
+    Documents.update({id: $routeParams.id}, $scope.form,
+      function (data) {
+        $log.info("обращение сохранено");
+        $log.debug(data);
+        // $location.url('/');
+      },
+      function (err) {
+        // сообщаем об ошибке.
+        $log.warn("++++++++++++++++++++++++++++");
+        switch(err.status) {
+          case 401:
+            $log.info(err);
+            alert('Вы не авторизованы! Зарегистрируйтесь на портале (меню "ВХОД").');
+            break;
+          case 403:
+            $log.info(err);
+            alert('Не достаточно прав.');
+            break;
+          default:
+            alert(err.statusText);
+        };
+      }
+    );
     history.back();
   };
 }
@@ -244,7 +267,7 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories,
   };
 
   // функция сохранения обращения
-  $scope.submitDocument = function () {
+  $scope.submit = function () {
     $scope.form.category = $scope.category._id;
     var newDocument = new Documents($scope.form);
 
@@ -255,33 +278,42 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories,
         $location.url('/');
       },
       function (err) {
-            // сообщаем об ошибке.
-            alert(err.message);
+        // сообщаем об ошибке.
+        $log.warn("++++++++++++++++++++++++++++");
+        switch(err.status) {
+          case 401:
+            $log.info(err);
+            alert('Вы не авторизованы! Зарегистрируйтесь на портале (меню "ВХОД").');
+            break;
+          default:
+            alert(err.statusText);
+        };
+        $location.url('/');
       }
     );
   };
 }
 
 // главная страница личного кабинета
-function PersonalAreaCtrl($scope, $http, $location, $routeParams, Documents, Categories) {
+function PersonalAreaCtrl($scope, $http, $location, $routeParams, myDocuments, Categories) {
   'use strict';
   // подготовим пагинатор
   $scope.currentPage = 0;
   $scope.pageSize = 10;
   $scope.filterDocuments = [];
   $scope.url = $location.url();
-  // заливаем объекты Documents и Categories в скоуп
-  $scope.documents = Documents.query();
+  // заливаем объекты myDocuments и Categories в скоуп
+  // api сам решает какие документы нам отдать
+  $scope.documents = myDocuments.query();
   $scope.categories = Categories.query();
-
-  // вешаем событие на click на карте
-
+  // показывать обращения в работе
+  $scope.iStatus = {status: 1};
   // посчитаем количество страниц
   $scope.numberOfPages=function(){
     return Math.ceil($scope.documents.length/$scope.pageSize);
   };
 }
-
+// страница администрирования
 function AdminPanelCtrl($scope, Categories, Goverments, Users, $uibModal, $log) {
   'use strict';
   $scope.users = Users.query();
@@ -298,6 +330,13 @@ function AdminPanelCtrl($scope, Categories, Goverments, Users, $uibModal, $log) 
     {id: 0, name: "гость"},{id: 1, name: "пользователь"},{id: 2, name: "модератор"},{id: 3, name: "администратор"}
   ];
 
+  $scope.user =[];
+  $scope.saveUser = function(user) {
+    $log.info(user.id);
+    // $scope.$apply(function(){
+      $log.info(user);
+    // })
+  }
   // функция сохранения обращения
   $scope.editGoverment = function (ogv_id) {
     // ngDialog.open({ template: 'popupTmpl.html', className: 'ngdialog-theme-default' });

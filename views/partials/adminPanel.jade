@@ -1,18 +1,38 @@
 .jumborton
     form.tab-form-admin(name="outerForm")
         uib-tabset(active="activeForm")
-            uib-tab(index="0")
-                uib-tab-heading
-                    | глобальные настройки
-                ng-form(name="nestedForm")
-                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
+            //- uib-tab(index="0")
+            //-     uib-tab-heading
+            //-         | глобальные настройки
+            //-     ng-form(name="nestedForm")
+            //-         .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
             uib-tab(index="1")
                 uib-tab-heading
                     | пользователи
                 ng-form(name="profileForm")
-                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
+                    .form-group(style="background-color: #F7F1D9; font-color: #000")
+                      ul.nav.nav-pills
+                        //фильтр по статусу
+                        .col-sm-2(style="margin: 0; padding: 0;")
+                          .btn-group.btn-group-justified(uib-dropdown, dropdown-append-to-body)
+                            #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle) группа
+                              span.caret
+                            ul.dropdown-menu(uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
+                              li(role="menuitem")
+                                a(href="#", ng-click="igroup={group:1}") пользователи
+                              li(role="menuitem")
+                                a(href="#", ng-click="igroup={group:2}") модераторы
+                              li(role="menuitem")
+                                a(href="#", ng-click="igroup={group:3}") администраторы
+                              li.divider
+                              li(role="menuitem")
+                                a(href="#", ng-click="igroup={}") все
+                        // фильтр поиска в обращениях
+                        .col-sm-2(style="margin: 0 0 0 4px; padding: 0; float: right;")
+                            input.form-control(uib-dropdown-search,id="ifilter", name="ifilter", type="text", ng-model="userquery", placeholder="строка поиска...")
+                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 450px")
                         uib-accordion(close-others="true")
-                            div.panel-info(uib-accordion-group, heading="{{user.name}}", ng-repeat="user in users")
+                            div.panel-info(uib-accordion-group, heading="{{user.name}}", ng-repeat="user in filterUsers =(users | filter:userquery | filter:igroup)")
                                 .form-group
                                     label фамилия:
                                     input.form-control(type="text", required, ng-model="user.lastName")
@@ -27,14 +47,24 @@
                                     input.form-control(type="text", required, ng-model="user.email")
                                 .form-group
                                     label группа:
-                                    select.form-control(name="user.group", ng-model="user.group", required, ng-options="ug as ug.name for ug in users_group track by ug.id")
+                                    select.form-control(name="user.group", ng-model="user.group", required, ng-options="ug.id as ug.name for ug in users_group track by ug.id")
+                                .form-group
+                                    .col-sm-4
+                                    .col-sm-4
+                                        button.btn.btn-warning.form-control(ng-click="saveUser(user)") сохранить
+                                    .col-sm-4
             uib-tab(index="2")
                 uib-tab-heading
                     | категории обращений
                 ng-form(name="profileForm")
-                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
+                    .form-group(style="background-color: #F7F1D9; font-color: #000")
+                        ul.nav.nav-pills
+                            // фильтр поиска в обращениях
+                            .col-sm-2(style="margin: 0 0 0 4px; padding: 0; float: right;")
+                                input.form-control(uib-dropdown-search,id="cfilter", name="cfilter", type="text", ng-model="catquery", placeholder="строка поиска...")
+                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 450px")
                         uib-accordion(close-others="true")
-                            div.panel-info(uib-accordion-group, heading="{{category.name}}", ng-repeat="category in categories")
+                            div.panel-info(uib-accordion-group, heading="{{category.name}}", ng-repeat="category in filterCategories=(categories | filter: catquery)")
                                 .form-group
                                     label наименование категории:
                                     input.form-control(type="text", required, ng-model="category.name")
@@ -45,9 +75,14 @@
                 uib-tab-heading
                     | органы власти
                 ng-form(name="profileForm")
-                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
+                    .form-group(style="background-color: #F7F1D9; font-color: #000")
+                        ul.nav.nav-pills
+                            // фильтр поиска в обращениях
+                            .col-sm-2(style="margin: 0 0 0 4px; padding: 0; float: right;")
+                                input.form-control(uib-dropdown-search,id="ifilter", name="ifilter", type="text", ng-model="gquery", placeholder="строка поиска...")
+                    .form-group(style="margin-top: 5px; overflow-y: scroll; height: 450px")
                         uib-accordion(close-others="true")
-                            div.panel-info(uib-accordion-group, heading="{{goverment.name}}", ng-repeat="goverment in goverments")
+                            div.panel-info(uib-accordion-group, heading="{{goverment.name}}", ng-repeat="goverment in filtergoverments=(goverments | filter: gquery)")
                                 .form-group
                                     label наименование органа власти:
                                     input.form-control(type="text", required, ng-model="goverment.name")

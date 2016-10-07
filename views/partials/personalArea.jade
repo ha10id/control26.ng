@@ -4,8 +4,28 @@
             uib-tab(index="0")
                 //- , heading="мои обращения")
                 uib-tab-heading
-                    | мои обращения
+                    | мои документы
                 ng-form(name="nestedForm")
+                    .form-group(style="background-color: #F7F1D9; font-color: #000")
+                      ul.nav.nav-pills
+                        //фильтр по статусу
+                        .col-sm-2(style="margin: 0; padding: 0;")
+                          .btn-group.btn-group-justified(uib-dropdown, dropdown-append-to-body)
+                            #btn-append-to-body.button.btn.btn-info(type="button", uib-dropdown-toggle) Статус обращения
+                              span.caret
+                            ul.dropdown-menu(uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
+                              li(role="menuitem")
+                                a(href="#", ng-click="iStatus={status:0}") Новое
+                              li(role="menuitem")
+                                a(href="#", ng-click="iStatus={status:1}") В работе
+                              li(role="menuitem")
+                                a(href="#", ng-click="iStatus={status:2}") Закрыто
+                              li.divider
+                              li(role="menuitem")
+                                a(href="#", ng-click="iStatus={}") Все
+                        // фильтр поиска в обращениях
+                        .col-sm-2(style="margin: 0 0 0 4px; padding: 0; float: right;")
+                            input.form-control(uib-dropdown-search,id="ifilter", name="ifilter", type="text", ng-model="query", placeholder="строка поиска...")
                     // список обращений
                     .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
                         div(ng-repeat="document in filterDocuments =(documents | filter:query | filter:iStatus) | startFrom:currentPage*pageSize | limitTo:pageSize")
@@ -23,6 +43,15 @@
                                   p адрес: {{document.address}}
                                   p {{document.description}}
                                   a(href='editDocument/{{document.id}}') Edit
+                    // пагинатор
+                    .form-group
+                      .btn-group.btn-group-justified
+                        .btn-group
+                          button.btn.btn-info(ng-disabled="currentPage == 0", ng-click="currentPage=currentPage-1") Назад
+                        .btn-group
+                          button.btn.btn-default(disabled="disabled") {{currentPage+1}}/{{numberOfPages()}}
+                        .btn-group
+                          button.btn.btn-info(ng-disabled="currentPage >= filterDocuments.length/pageSize - 1", ng-click="currentPage=currentPage+1") Вперед
             uib-tab(index="1")
                 uib-tab-heading
                     | мой профиль

@@ -1,12 +1,11 @@
 var gm              = require('gm');
 var fs              = require('fs');
-
-// grab the document model we just created
-var User     = require('./models/User.js')
+//========================================================
+var User     = require('./models/User.js');
 var Document = require('./models/Document.js');
 var Category = require('./models/Category.js');
 var Goverment = require('./models/Goverment.js');
-
+// генерация уникального ID
 var ID = function () {
   'use strict';
   // Math.random should be unique because of its seeding algorithm.
@@ -14,57 +13,10 @@ var ID = function () {
   // after the decimal.
   return '_' + Math.random().toString(36).substr(2, 9);
 };
-
-//========================================================
-// Users
-// список пользователей -
-exports.goverments = function (req, res) {
-  'use strict';
-  Goverment.find(function(err, goverments) {
-    if (err) {
-      res.send(err);
-    }
-    goverments = goverments.map(function(data) {
-      return {
-        id: data.id,
-        worker: data._worker,
-        name: data.name
-      };
-    });
-      res.json(goverments); // return all users in JSON format
-    }).sort({name: 1});
-};
-
-//========================================================
-// Users
-// список пользователей -
-exports.users = function (req, res) {
-  'use strict';
-  User.find(function(err, users) {
-    if (err) {
-      res.send(err);
-    }
-    users = users.map(function(data) {
-      return {
-        id: data.id,
-        name: data.name,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        middleName: data.middleName,
-        email: data.email,
-        group: data.group,
-        uid: data.uid,
-        regdate: data.regdate
-      };
-    });
-      res.json(users); // return all users in JSON format
-    }).sort({lastName: 1});
-};
-
 //========================================================
 // Documents
 // список документов +
-exports.documents = function (req, res) {
+exports.list = function (req, res) {
   'use strict';
   Document.find(function(err, documents) {
     if (err) {
@@ -88,8 +40,41 @@ exports.documents = function (req, res) {
       res.json(documents); // return all documents in JSON format
     }).sort({datestamp: -1});
 };
-// get one +
-exports.document = function (req, res) {
+// список документов по владельцу +
+exports.listMyDocuments = function (req, res) {
+  'use strict';
+  if (req.session.isAdmin) {
+    var filter = {};
+  } else {
+    var owner = req.session.user_id;
+    var filter = {_creator: owner};
+  }
+  console.log('список по автору');
+  console.log(owner);
+  Document.find(filter, function(err, documents) {
+    if (err) {
+      res.send(err);
+    }
+    documents = documents.map(function(data) {
+      return {
+        id: data.id,
+        name: data.name,
+        title: data.title,
+        address: data.address,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        description: data.description,
+        status: data.status,
+        astatus: data.istatus,
+        datestamp: data.datestamp,
+        geoObject: data.geoObject
+      };
+    });
+      res.json(documents); // return all documents in JSON format
+    }).sort({datestamp: -1});
+};
+// получить документ по ID +
+exports.get = function (req, res) {
   'use strict';
   var id = req.params.id;
   console.log("-----------------------------------------");
@@ -102,80 +87,69 @@ exports.document = function (req, res) {
     res.json(document); // return one document in JSON format
   }).populate("_comments");
 };
-// POST
-exports.addDocument = function (req, res) {
+// добавление документа
+exports.add = function (req, res) {
   'use strict';
   // data.posts.push(req.body);
-  console.log("-----------------------------------------");
-  console.log("создание документа: \n");
-  // заполняем поля статуса и даты создания документа
-  req.body.status = 0;
-  req.body.datestamp = new Date();
-  // новый объект
-  var newDocument = new Document(req.body);
-  // пробуем записать
-  newDocument.save(function(err) {
-    console.log(newDocument);
-    var data = newDocument.toObject();
-    data.id = data._id;
-    if (err) {
-      res.send(err);
-    }
-    res.json(data);
-  });
+    console.log("-----------------------------------------");
+    console.log("создание документа: \n");
+
+  if (req.session.authorized) {
+    // заполняем поля статуса и даты создания документа
+    req.body.status = 0;
+    req.body.datestamp = new Date();
+    // новый объект
+    var newDocument = new Document(req.body);
+    // пробуем записать
+    newDocument.save(function(err) {
+      console.log(newDocument);
+      var data = newDocument.toObject();
+      data.id = data._id;
+      if (err) {
+        res.send(err);
+      }
+      res.json(data);
+    });
+  } else {
+    res.sendStatus(401);
+  }
 };
-// put document (update) +50%
-exports.editDocument = function (req, res) {
+// обновление документа
+exports.edit = function (req, res) {
   'use strict';
   var id = req.params.id;
   console.log("-----------------------------------------");
   console.log("обновление документа: ", id, "\n");
   console.dir(req.body);
-  Document.findOne({ _id : id }, function(err, document) {
-    if (err) {
-      res.send(false);
-    }
-    // изменяем поля
-    document.title = req.body.title;
-    document.description = req.body.description;
-    document.category = req.body.category;
-    document.longitude = req.body.longitude;
-    document.latitude = req.body.latitude;
-    document.address = req.body.address;
-    // сохраняем отредактированный документ
-    document.save(function(err) {
+  if (req.session.authorized) {
+    Document.findOne({ _id : id }, function(err, document) {
       if (err) {
-       res.send(false);
-     }
-     res.json(true);
-   });
-  });
+        res.send(false);
+      }
+      // изменяем поля
+      document.title = req.body.title;
+      document.description = req.body.description;
+      document.category = req.body.category;
+      document.longitude = req.body.longitude;
+      document.latitude = req.body.latitude;
+      document.address = req.body.address;
+      if (document._creator == req.session.user_id || req.session.isAdmin) {
+        // сохраняем отредактированный документ
+        document.save(function(err) {
+          if (err) {
+           res.send(false);
+         }
+         res.json(true);
+        });
+      } else {
+        res.sendStatus(403); // запрещено
+      }
+    });
+  } else {
+    res.sendStatus(401); // не авторизован
+  }
 };
-//========================================================
-// Categories
-// get all +
-exports.categories = function (req, res) {
-  'use strict';
-  console.log("-----------------------------------------");
-  console.log('api get categories', req.params);
-  Category.find(function(err, categories) {
-    if (err) {
-      res.send(err);
-    }
-    res.json(categories); // return all categories in JSON format
-  });
-};
-// get one +
-exports.category = function (req, res) {
-  var id = req.params.id;
-  console.log('api get category :', id);
-  Category.findOne({ _id : id }, function(err, category) {
-    if (err) {
-      res.send(err);
-    }
-    res.json(category); // return document in JSON format
-  });
-};
+
 //========================================================
 // загрузка картинок
 exports.imageUpload = function (req, res, next) {
@@ -235,6 +209,7 @@ exports.imageUpload = function (req, res, next) {
       });
   };
 
+// загрузка картинок в массив и на сервер
 exports.imageFakeUpload = function (req, res, next) {
   'use strict';
   console.log("-----------------------------------------");
@@ -245,6 +220,7 @@ exports.imageFakeUpload = function (req, res, next) {
   // console.log(file.type); //tmp path (ie: /tmp/12345-xyaz.png)
   // console.log(req.body.document_id);
   var tmp_path = file.path;
+  // формируем уникальное имя для файла
   var fileName = ID();
   var target_path = 'public/uploads/' + fileName;
   fs.renameSync(tmp_path, target_path, function(err) {
@@ -261,59 +237,4 @@ exports.imageFakeUpload = function (req, res, next) {
   });
   console.log("имя файла на запись: ", fileName);
   res.json({fileName});
-};
-
-//========================================================
-// GET
-exports.posts = function (req, res) {
-  var posts = [];
-  data.posts.forEach(function (post, i) {
-    posts.push({
-      id: i,
-      title: post.title,
-      text: post.text.substr(0, 50) + '...'
-    });
-  });
-  res.json({
-    posts: posts
-  });
-};
-// GET ONE
-exports.post = function (req, res) {
-  var id = req.params.id;
-  if (id >= 0 && id < data.posts.length) {
-    res.json({
-      post: data.posts[id]
-    });
-  } else {
-    res.json(false);
-  }
-};
-// POST
-exports.addPost = function (req, res) {
-  data.posts.push(req.body);
-  res.json(req.body);
-};
-// PUT
-exports.editPost = function (req, res) {
-  var id = req.params.id;
-
-  if (id >= 0 && id < data.posts.length) {
-    data.posts[id] = req.body;
-    res.json(true);
-  } else {
-    res.json(false);
-  }
-};
-
-// DELETE
-exports.deletePost = function (req, res) {
-  var id = req.params.id;
-
-  if (id >= 0 && id < data.posts.length) {
-    data.posts.splice(id, 1);
-    res.json(true);
-  } else {
-    res.json(false);
-  }
 };

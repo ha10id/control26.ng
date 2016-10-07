@@ -1,10 +1,8 @@
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['ngRoute', 'yaMap', 'ui.bootstrap', 'ngFileUpload', 'myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.components']).
-config(function (yaMapSettingsProvider) { yaMapSettingsProvider.setOrder('latlong'); }).
-// config(function(ymapsConfig){
-//   ymapsConfig.clusterize = true;
-//   ymapsConfig.markerOptions.preset = 'islands#darkblueDotIcon';
-// }).
+config(function (yaMapSettingsProvider) {
+  yaMapSettingsProvider.setOrder('latlong');
+}).
 config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider.
   when('/', {
@@ -47,6 +45,19 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
     templateUrl: 'partials/deletePost',
     controller: DeletePostCtrl
   }).
+  when('/loginESIA', {
+    redirectTo: '/login'
+  }).
+  // when('/loginESIA', {
+  //   // redirectTo: function($location) {
+  //   //   $location.href('/login');
+  //   //   $location.replace();
+  //   //   // $location.href = "/404.html";
+  //   // }
+  //     controller: ['$location', function($location){
+  //       $location.absUrl('http://localhost:3000/login');
+  //   }]
+  // }).
   otherwise({
     redirectTo: '/'
   });

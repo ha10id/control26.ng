@@ -20,6 +20,11 @@ angular.module('myApp.services', ['ngResource'])
 		'update': { method:'PUT'}
 	});
 })
+.factory('myDocuments', function($resource){
+	return $resource('api/mydocuments/:id', null, {
+		'update': { method:'PUT'}
+	});
+})
 .factory('Users', function($resource){
 	return $resource('api/users/:id', null, {
 		'update': { method:'PUT'}

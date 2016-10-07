@@ -2,7 +2,8 @@
 // grab the mongoose module
 var mongoose = require('mongoose');
 var Category = require('./Category');
-var Comment = require('./Comment');
+var User     = require('./User');
+var Comment  = require('./Comment');
 var Schema   = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
@@ -21,6 +22,7 @@ var Document = new Schema({
     status: Number,
     datestamp: Date,
     lastedit: Date,
+    _creator: [{ type: ObjectId, ref: 'User' }],
     _comments: [{ type: ObjectId, ref: 'Comment' }]
 });
 
@@ -46,6 +48,7 @@ Document.virtual('istatus')
         return retValue;
 });
 
+// создаем виртуальное поле, содержащее параметры метки на карте для текущего документа
 Document.virtual('geoObject')
     .get(function() {
         var go = {
@@ -61,6 +64,7 @@ Document.virtual('geoObject')
         return go;
 });
 
+// перед сохранением пишем время
 Document.pre('save', function(next) {
     this.lastedit = new Date();
     console.log('document presave', this._id.toHexString());
