@@ -308,6 +308,7 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, myDocuments, C
   $scope.categories = Categories.query();
   // показывать обращения в работе
   $scope.iStatus = {status: 1};
+  // $scope.user = currentUser();
   // посчитаем количество страниц
   $scope.numberOfPages=function(){
     return Math.ceil($scope.documents.length/$scope.pageSize);

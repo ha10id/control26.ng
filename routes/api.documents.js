@@ -43,35 +43,37 @@ exports.list = function (req, res) {
 // список документов по владельцу +
 exports.listMyDocuments = function (req, res) {
   'use strict';
-  if (req.session.isAdmin) {
-    var filter = {};
-  } else {
-    var owner = req.session.user_id;
-    var filter = {_creator: owner};
-  }
-  console.log('список по автору');
-  console.log(owner);
-  Document.find(filter, function(err, documents) {
-    if (err) {
-      res.send(err);
+  if (req.session.authorized) {
+    if (req.session.isAdmin) {
+      var filter = {};
+    } else {
+      var owner = req.session.user_id;
+      var filter = {_creator: owner};
     }
-    documents = documents.map(function(data) {
-      return {
-        id: data.id,
-        name: data.name,
-        title: data.title,
-        address: data.address,
-        latitude: data.latitude,
-        longitude: data.longitude,
-        description: data.description,
-        status: data.status,
-        astatus: data.istatus,
-        datestamp: data.datestamp,
-        geoObject: data.geoObject
-      };
-    });
-      res.json(documents); // return all documents in JSON format
-    }).sort({datestamp: -1});
+    Document.find(filter, function(err, documents) {
+      if (err) {
+        res.send(err);
+      }
+      documents = documents.map(function(data) {
+        return {
+          id: data.id,
+          name: data.name,
+          title: data.title,
+          address: data.address,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          description: data.description,
+          status: data.status,
+          astatus: data.istatus,
+          datestamp: data.datestamp,
+          geoObject: data.geoObject
+        };
+      });
+        res.json(documents); // return all documents in JSON format
+      }).sort({datestamp: -1});
+  } else {
+    res.sendStatus(401); // не авторизован
+  }
 };
 // получить документ по ID +
 exports.get = function (req, res) {
