@@ -70,7 +70,7 @@ exports.assert = function(req, res, next) {
 
     // req.session.user_id = 0;
     // поищем пользователя
-    User.findOne({ 'uid': uin.uid }, { id: 1, group: 1 }, function(err, user) {
+    User.findOne({ 'uid': uin.uid }, { id: 1, group: 1, name: 1, email: 1 }, function(err, user) {
       if (user) {
           //   req.currentUser = user;
           req.session.user_id = user.id;
