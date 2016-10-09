@@ -43,7 +43,6 @@ exports.login = function(req, res) {
         res.redirect(login_url);
     });
 };
-
 // Assert endpoint for when login completes
 exports.assert = function(req, res, next) {
   // console.dir(JSON.stringify(req.body));
@@ -59,6 +58,7 @@ exports.assert = function(req, res, next) {
     // res.session.message = name_id = saml_response.user.name_id;
     req.session.index = saml_response.user.session_index;
     req.session.name_id = saml_response.user.name_id;
+    req.session.isadmin = false;
     var attr = saml_response.user.attributes;
     var uin = {};
     // получим данные из ЕСИА
@@ -67,6 +67,7 @@ exports.assert = function(req, res, next) {
     uin.middleName = attr['urn:mace:dir:attribute:middleName'];
     uin.firstName = attr['urn:mace:dir:attribute:firstName'];
     uin.lastName = attr['urn:mace:dir:attribute:lastName'];
+
     // req.session.user_id = 0;
     // поищем пользователя
     User.findOne({ 'uid': uin.uid }, { id: 1, group: 1 }, function(err, user) {
@@ -89,11 +90,13 @@ exports.assert = function(req, res, next) {
           user.save();
       }
       // console.dir(user);
-
+      req.session.name = user.name;
+      req.session.currentUser = user;
       if(user.group == 3) {
           req.session.isadmin = true;
       }
       req.session.authorized = true;
+      res.redirect('/');
     });
   });
 };

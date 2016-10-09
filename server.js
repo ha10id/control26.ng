@@ -70,10 +70,10 @@
   app.post('/assert', login.assert);
   // пользователи
   app.get('/api/users', users.list);
-  // app.get('/api/user/:id', api.user);
+  app.get('/api/users/:id', users.get);
   // органы власти
   app.get('/api/goverments', goverments.list);
-  // app.get('/api/goverments/:id', api.goverment);
+  app.get('/api/goverments/:id', goverments.get);
   // категории обращений
   app.get('/api/categories', categories.list);
   app.get('/api/categories/:id', categories.get);
