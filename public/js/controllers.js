@@ -6,7 +6,7 @@
 // });
 
 // главная страница
-function IndexCtrl($scope, $location, $routeParams, Documents, Categories, $log) {
+function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Categories, $log) {
   'use strict';
   // подготовим пагинатор
   $scope.currentPage = 0;
@@ -16,6 +16,10 @@ function IndexCtrl($scope, $location, $routeParams, Documents, Categories, $log)
   $scope.documents = Documents.query();
   $scope.categories = Categories.query();
   // $scope.url = $location.url();
+
+  var user = AuthService.loginIs();
+  $log.info(user);
+
   $scope.login = function(){
     $log.info("login click");
   }
