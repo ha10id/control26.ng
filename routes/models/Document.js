@@ -22,7 +22,7 @@ var Document = new Schema({
     status: Number,
     datestamp: Date,
     lastedit: Date,
-    _creator: [{ type: ObjectId, ref: 'User' }],
+    _creator: { type: ObjectId, ref: 'User' },
     _comments: [{ type: ObjectId, ref: 'Comment' }]
 });
 
