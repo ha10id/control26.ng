@@ -46,8 +46,10 @@
                                     label электронная почта:
                                     input.form-control(type="text", required, ng-model="user.email")
                                 .form-group
-                                    label группа:
-                                    select.form-control(name="user.group", ng-model="user.group", required, ng-options="ug.id as ug.name for ug in users_group track by ug.id")
+                                    label группа: {{user.group}}
+                                    //- select.form-control(ng-model="user.group", name="userGroup")
+                                        //- option(ng-repeat="ug.name in users_group",ng-selected="ug.id === user.group", value="ug.name")
+                                    select.form-control(name="user.group", required, ng-options="ug as ug.name for ug in users_group track by ug.id", ng-model="user.group")
                                 .form-group
                                     .col-sm-4
                                     .col-sm-4
@@ -70,7 +72,7 @@
                                     input.form-control(type="text", required, ng-model="category.name")
                                 .form-group
                                     label наименование органа власти:
-                                    select.form-control(name="goverment", ng-model="category.goverment", required, ng-options="g as g.name for g in goverments track by g._id")
+                                    select.form-control(name="goverment", ng-model="category.ogv", required, ng-options="g as g.name for g in goverments track by g._id")
             uib-tab(index="3")
                 uib-tab-heading
                     | органы власти

@@ -1,14 +1,34 @@
-// использование промисов (устарело)
-// var query = UserService.query();
-// query.$promise.then(function(data) {
-//      $scope.users = data;
-//      // Do whatever when the request is finished
-// });
+function LoginCtrl($rootScope, $http, AuthService, $log) {
+  'use strict';
+  $log.info('login controller');
+  $http.get('/login').success(function(data) {
+    AuthService.getSession();
+    $rootScope.currentUser = AuthService.status.user;
+    $rootScope.isAdmin = AuthService.status.admin;
+    $rootScope.isAuthorized = true;
+    $log.info('пользователь: ', $rootScope.currentUser);
+    history.back();
+  });
+}
+
+function LogoutCtrl($rootScope, $http, $location, AuthService, $log) {
+  'use strict';
+  $log.info('logout controller');
+  $http.get('/logout').success( function() {
+    $rootScope.isAuthorized = false;
+    $rootScope.isAdmin = false;
+    $rootScope.currentUser = {};
+    $location.url('/');
+  });
+
+  // history.back();
+}
 
 // главная страница
 function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Categories, $log) {
   'use strict';
-  // подготовим пагинатор
+  AuthService.getSession();
+    // подготовим пагинатор
   $scope.currentPage = 0;
   $scope.pageSize = 10;
   $scope.filterDocuments = [];
@@ -16,13 +36,9 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   $scope.documents = Documents.query();
   $scope.categories = Categories.query();
   // $scope.url = $location.url();
-
-  var user = AuthService.loginIs();
-  $log.info(user);
-
-  $scope.login = function(){
-    $log.info("login click");
-  }
+  // AuthService.getSession();
+  // var user = AuthService.testLogin();
+  // $log.info(user);
   // вешаем событие на click на карте
   $scope.mapClick = function(e){
     var coords = e.get('coords');
@@ -69,11 +85,13 @@ function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories
   };
 }
 // редактирование обращения
-function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories, Upload, $timeout, $log) {
+function EditDocumentCtrl($scope, $location, $routeParams, AuthService, Documents, Categories, Upload, $timeout, $log) {
   'use strict';
+  AuthService.getSession();
   $scope.invisible = true;
   $scope.form = {};
   // вешаем событие на dragend маркера
+  $log.info('-------------controller edit document-----------------');
   $scope.dragEnd = function(e){
     var coords = e.get('target').geometry.getCoordinates();
     ymaps.geocode([coords[0], coords[1]], { results: 1 }).then(function (res) {
@@ -99,7 +117,9 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
     // категории
     $scope.categories = Categories.query();
     // категория в документе
-    $scope.category =  Categories.get({id: data.category});
+    // $scope.category =  Categories.get({id: data.category});
+    $scope.category = {id: data.category, name: ''};
+    $log.info($scope.category);
     // подготавливаем значения для карты
     $scope.map = {
       center: [data.longitude, data.latitude],
@@ -142,7 +162,7 @@ function EditDocumentCtrl($scope, $location, $routeParams, Documents, Categories
   // функция обновления документа (кнопка "сохранить")
   $scope.submit = function () {
     // категория: заменяем объект на id
-    $scope.form.category = $scope.category._id;
+    $scope.form.category = $scope.category.id;
     Documents.update({id: $routeParams.id}, $scope.form,
       function (data) {
         $log.info("обращение сохранено");
@@ -299,8 +319,9 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories,
 }
 
 // главная страница личного кабинета
-function PersonalAreaCtrl($scope, $http, $location, $routeParams, myDocuments, Categories) {
+function PersonalAreaCtrl($scope, $http, $location, $routeParams, AuthService, myDocuments, Categories, Users, $log) {
   'use strict';
+  AuthService.getSession();
   // подготовим пагинатор
   $scope.currentPage = 0;
   $scope.pageSize = 10;
@@ -310,6 +331,13 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, myDocuments, C
   // api сам решает какие документы нам отдать
   $scope.documents = myDocuments.query();
   $scope.categories = Categories.query();
+
+  var status = AuthService.getStatus();
+
+  // $log.info('статус: ', status);
+  if(status.authorized) {
+    $scope.user = status.user;
+  };
   // показывать обращения в работе
   $scope.iStatus = {status: 1};
   // $scope.user = currentUser();
@@ -318,6 +346,7 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, myDocuments, C
     return Math.ceil($scope.documents.length/$scope.pageSize);
   };
 }
+
 // страница администрирования
 function AdminPanelCtrl($scope, Categories, Goverments, Users, $uibModal, $log) {
   'use strict';
@@ -336,10 +365,19 @@ function AdminPanelCtrl($scope, Categories, Goverments, Users, $uibModal, $log) 
   ];
 
   $scope.user =[];
+
+  $log.info('-----admin panel controller---------------');
+  $log.info($scope.goverments);
+
   $scope.saveUser = function(user) {
-    $log.info(user.id);
+    // $log.info(user.id);
     // $scope.$apply(function(){
-      $log.info(user);
+    var groupObject = user.group;
+    user.group = groupObject.id;
+    $log.info(user);
+    // user.group = groupObject;
+    $log.info('выбранная группа: ', user.group);
+    user.group = groupObject;
     // })
   }
   // функция сохранения обращения

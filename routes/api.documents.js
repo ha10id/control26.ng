@@ -47,7 +47,7 @@ exports.listMyDocuments = function (req, res) {
     if (req.session.isadmin) {
       var filter = {};
     } else {
-      var owner = req.session.user_id;
+      var owner = req.session.currentUser._id;
       var filter = {_creator: owner};
     }
     Document.find(filter, function(err, documents) {
@@ -99,8 +99,8 @@ exports.add = function (req, res) {
   if (req.session.authorized) {
     // заполняем поля статуса и даты создания документа
     req.body.status = 0;
-    req.body._creator = req.session.user_id;
-    req.body.name = req.session.name;
+    req.body._creator = req.session.currentUser._id;
+    req.body.name = req.session.currentUser.name;
     req.body.datestamp = new Date();
     // новый объект
     var newDocument = new Document(req.body);
@@ -125,8 +125,9 @@ exports.edit = function (req, res) {
     var id = req.params.id;
     console.log("-----------------------------------------");
     console.log("обновление документа: ", id, "\n");
-    console.log(req.session.user);
-    console.dir(req.body);
+    console.log('session.currentUser: ', req.session.currentUser);
+    console.log('session.isadmin: ', req.session.isadmin);
+    console.dir('request.body: ', req.body);
 
     Document.findOne({ _id : id }, function(err, document) {
       if (err) {
@@ -139,13 +140,14 @@ exports.edit = function (req, res) {
       document.longitude = req.body.longitude;
       document.latitude = req.body.latitude;
       document.address = req.body.address;
-      if (document._creator == req.session.user_id || req.session.isаdmin == true) {
+      // document.name = req.session.user;
+      if (document._creator == req.session.currentUser._id || req.session.isadmin) {
         // сохраняем отредактированный документ
         document.save(function(err) {
           if (err) {
-           res.send(false);
-         }
-         res.json(true);
+            res.send(false);
+          }
+          res.json(true);
         });
       } else {
         res.sendStatus(403); // запрещено

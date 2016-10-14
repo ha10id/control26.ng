@@ -11,21 +11,29 @@ exports.list = function (req, res) {
   'use strict';
   console.log("-----------------------------------------");
   console.log('api get categories', req.params);
-  if (req.session.authorized) {
+  // if (req.session.authorized) {
     Category.find(function(err, categories) {
       if (err) {
         res.send(err);
       }
+     categories = categories.map(function(data) {
+        return {
+          id: data.id,
+          name: data.name,
+          _ogv: data._ogv,
+          ogv: {id: data._ogv, name: ''}
+        };
+      });
       res.json(categories); // return all categories in JSON format
     });
-  } else {
-    res.sendStatus(401); // не авторизован
-  }  
+  // } else {
+    // res.sendStatus(401); // не авторизован
+  // }
 };
 // возвращает одну записть по её ID
 exports.get = function (req, res) {
   'use strict';
-  if (req.session.authorized) {
+  // if (req.session.authorized) {
     var id = req.params.id;
     console.log('api get category :', id);
     Category.findOne({ _id : id }, function(err, category) {
@@ -34,7 +42,7 @@ exports.get = function (req, res) {
       }
       res.json(category); // return document in JSON format
     });
-  } else {
-    res.sendStatus(401); // не авторизован
-  }  
+  // } else {
+  //   res.sendStatus(401); // не авторизован
+  // }
 };

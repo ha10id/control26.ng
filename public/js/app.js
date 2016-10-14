@@ -1,5 +1,17 @@
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['auth', 'ngRoute', 'yaMap', 'ui.bootstrap', 'ngFileUpload', 'myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.components']).
+run(function($rootScope, AuthService) {
+    console.log("app run");
+    var session = AuthService.getSession();
+    console.log(session);
+    if(AuthService.isAuthorized()) {
+      console.log("authorized");
+      $rootScope.isAuthorized = true;
+    } else {
+      console.log("unauthorized");
+      $rootScope.isAuthorized = false;
+    }
+}).
 config(function (yaMapSettingsProvider) {
   yaMapSettingsProvider.setOrder('latlong');
 }).
@@ -29,35 +41,14 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
     templateUrl: 'partials/adminPanel',
     controller: AdminPanelCtrl
   }).
-  when('/addPost', {
-    templateUrl: 'partials/addPost',
-    controller: AddPostCtrl
+  when('/login', {
+    templateUrl: 'partials/login',
+    controller:  LoginCtrl
   }).
-  // when('/readPost/:id', {
-  //   templateUrl: 'partials/readPost',
-  //   controller: ReadPostCtrl
-  // }).
-  when('/editPost/:id', {
-    templateUrl: 'partials/editPost',
-    controller: EditPostCtrl
+  when('/logout', {
+    templateUrl: 'partials/login',
+    controller:  LogoutCtrl
   }).
-  when('/deletePost/:id', {
-    templateUrl: 'partials/deletePost',
-    controller: DeletePostCtrl
-  }).
-  when('/loginESIA', {
-    redirectTo: '/login'
-  }).
-  // when('/loginESIA', {
-  //   // redirectTo: function($location) {
-  //   //   $location.href('/login');
-  //   //   $location.replace();
-  //   //   // $location.href = "/404.html";
-  //   // }
-  //     controller: ['$location', function($location){
-  //       $location.absUrl('http://localhost:3000/login');
-  //   }]
-  // }).
   otherwise({
     redirectTo: '/'
   });

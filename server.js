@@ -66,11 +66,14 @@
 // JSON API ================================================
   // login
   app.get('/login', login.login);
+  app.get('/logout', login.logout);
   app.get('/metadata.xml', login.getMetadata);
   app.post('/assert', login.assert);
   // пользователи
   app.get('/api/users', users.list);
   app.get('/api/users/:id', users.get);
+  app.get('/api/session', users.session);
+  // app.put('/api/session', users.new_session);
   // органы власти
   app.get('/api/goverments', goverments.list);
   app.get('/api/goverments/:id', goverments.get);
@@ -78,11 +81,11 @@
   app.get('/api/categories', categories.list);
   app.get('/api/categories/:id', categories.get);
   // обращения
-  app.get('/api/documents', documents.list);
+  app.get('/api/documents', loaduser.loadUser, documents.list);
   app.get('/api/mydocuments', loaduser.loadUser, documents.listMyDocuments);
   app.get('/api/documents/:id', loaduser.loadUser, documents.get);
   app.post('/api/documents', loaduser.loadUser, documents.add);
-  app.put('/api/documents/:id', documents.edit);
+  app.put('/api/documents/:id', loaduser.loadUser, documents.edit);
   // app.delete('/api/document/:id', documents.delete);
 
   // загрузка изображений на сервер с записью в документ
@@ -90,7 +93,7 @@
   // загрузка изображений на сервер без записи в документ(для новых обращений).
   // возвращает имя файла
   app.post('/api/image/fakeupload', documents.imageFakeUpload);
-  app.get('*', routes.index);
+  app.get('*', loaduser.loadUser, routes.index);
 
 // Start Server =============================================
   https.createServer(credentials,app).listen(app.get('port'), function () {

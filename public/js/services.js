@@ -30,22 +30,74 @@ angular.module('myApp.services', ['ngResource'])
 		'update': { method:'PUT'}
 	});
 });
-angular.module('auth', [ngCookies])
-.service('AuthService', function($cookies) {
+angular.module('auth', ['ngCookies'])
+.service('AuthService', function($cookies, $http, $rootScope) {
 	'use strict';
 
 	var self = this;
 	this.status = {
 		authorized: false,
+		admin: false,
+		token: '',
+		user: {}
 	};
-	this.loginIs = function(user) {
-		var user = {
-			ID: "57cf16206e4edc261c010422",
-			name: 'Anthonio Banderas',
-			group: 3
-		}
-		return user;
+
+	this.isAuthorized = function() {
+        console.log(self.status);
+ 		return self.status.authorized;
+
+    // self.token=data.token;
+	//            console.log(session);
+	// 		// console.log(data);
+	// 		$cookies.putObject('user', self.status.user);
+	// 		console.log('---------browser cookies---------');
+	// // 		// var brwCookie = $cookies.getAll();
+	// 		console.log($cookies.getObject('user'));
+	// // 		// console.log(brwCookie);
+
+	// 		console.log('---------loginIs---------');
+	// 		console.log(self.status.user);
+	// 		return self.status.user;
 	};
+
+	this.getStatus = function() {
+		return self.status;
+	};
+	// получаем сессию с сервера и заполняем this.status и $rootScope
+	this.getSession = function() {
+		$http.get('api/session')
+		.success(function(data) {
+            console.log('---------get server session---------');
+         	self.status.authorized 	= data.authorized;
+         	self.status.admin 		= data.isadmin;
+         	self.status.user 		= data.currentUser;
+	        $rootScope.isAdmin 		= self.status.admin;
+	        $rootScope.currentUser 	= self.status.user;
+	        $rootScope.isAuthorized = self.status.authorized;
+
+	        console.log('getSession.isAdmin: ', self.status.admin);
+	        console.log('getSession.user: ', self.status.user);
+			return data;
+		})
+	};
+
+	this.setSession = function() {
+	    self.status.authorized = false;
+	    self.status.user = {};
+        console.log('---------put to server session---------');
+		$http.put('api/session')
+		.success(function(user) {
+		    self.status.authorized = true;
+		    self.status.user = user;
+				console.log('put success');
+				return true;
+			})
+		.error(function(err){
+				console.err('put errror');
+				return err;
+			})
+	};
+});
 
 	// this.loginByCredentials = function(username, password) {
 	// 	return Restangular.all('sessions').post({ email: username, password: password })
@@ -71,4 +123,3 @@ angular.module('auth', [ngCookies])
 
 	// 	Restangular.all('sessions').remove();
 	// };
-});

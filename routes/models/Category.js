@@ -8,6 +8,7 @@ var ObjectId = Schema.ObjectId;
 // define our document model
 var Category = new Schema({
 	'name': String,
+	'_ogv': { type: Schema.ObjectId, ref: 'Goverment' },
 	'goverment': { type: Schema.ObjectId, ref: 'Goverment' }
 });
 

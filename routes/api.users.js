@@ -23,7 +23,7 @@ exports.list = function (req, res) {
           lastName: data.lastName,
           middleName: data.middleName,
           email: data.email,
-          group: data.group,
+          group: {id: data.group, name: ''},
           uid: data.uid,
           regdate: data.regdate
         };
@@ -48,5 +48,10 @@ exports.get = function (req, res) {
     });
   } else {
     res.sendStatus(401); // не авторизован
-  }    
+  }
+};
+// возвращает текущую сессию
+exports.session = function (req, res) {
+  'use strict';
+    res.json(req.session);
 };

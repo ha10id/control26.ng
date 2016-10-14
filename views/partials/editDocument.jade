@@ -23,7 +23,7 @@
     input.form-control(ng-model='form.address', name='address')
 .form-group
     label(for="category") Категория
-    select.form-control(name="category", ng-model="category", required, ng-options="c as c.name for c in categories track by c._id")
+    select.form-control(name="category", ng-model="category", required, ng-options="c as c.name for c in categories track by c.id")
         //- option value="{{category}}" selected
 .form-group
     #YMapsID.col-md-8
