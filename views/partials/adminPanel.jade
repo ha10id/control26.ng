@@ -19,11 +19,11 @@
                               span.caret
                             ul.dropdown-menu(uib-dropdown-menu, role="menu", aria-labelledby="btn-append-to-body")
                               li(role="menuitem")
-                                a(href="#", ng-click="igroup={group:1}") пользователи
+                                a(href="#", ng-click="igroup={_group:1}") пользователи
                               li(role="menuitem")
-                                a(href="#", ng-click="igroup={group:2}") модераторы
+                                a(href="#", ng-click="igroup={_group:2}") модераторы
                               li(role="menuitem")
-                                a(href="#", ng-click="igroup={group:3}") администраторы
+                                a(href="#", ng-click="igroup={_group:3}") администраторы
                               li.divider
                               li(role="menuitem")
                                 a(href="#", ng-click="igroup={}") все
@@ -46,9 +46,8 @@
                                     label электронная почта:
                                     input.form-control(type="text", required, ng-model="user.email")
                                 .form-group
-                                    label группа: {{user.group}}
-                                    //- select.form-control(ng-model="user.group", name="userGroup")
-                                        //- option(ng-repeat="ug.name in users_group",ng-selected="ug.id === user.group", value="ug.name")
+                                    label группа:
+                                    //- {{user.group}}
                                     select.form-control(name="user.group", required, ng-options="ug as ug.name for ug in users_group track by ug.id", ng-model="user.group")
                                 .form-group
                                     .col-sm-4
@@ -72,7 +71,8 @@
                                     input.form-control(type="text", required, ng-model="category.name")
                                 .form-group
                                     label наименование органа власти:
-                                    select.form-control(name="goverment", ng-model="category.ogv", required, ng-options="g as g.name for g in goverments track by g._id")
+                                    //- {{category.ogv}}
+                                    select.form-control(name="goverment", ng-model="category.ogv", required, ng-options="g as g.name for g in goverments track by g.id")
             uib-tab(index="3")
                 uib-tab-heading
                     | органы власти
@@ -90,4 +90,5 @@
                                     input.form-control(type="text", required, ng-model="goverment.name")
                                 .form-group
                                     label ответственное лицо:
-                                    select.form-control(name="user", ng-model="goverment.worker", required, ng-options="u as u.name for u in users track by u._id")
+                                    //- {{goverment.moderator}}
+                                    select.form-control(name="user", ng-model="goverment.moderator", required, ng-options="u as u.name for u in users track by u.id")

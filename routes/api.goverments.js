@@ -19,6 +19,7 @@ exports.list = function (req, res) {
         return {
           id: data.id,
           worker: data._worker,
+          moderator: {id: data._worker, name: ''},
           name: data.name
         };
       });
@@ -26,7 +27,7 @@ exports.list = function (req, res) {
       }).sort({name: 1});
   } else {
     res.sendStatus(401); // не авторизован
-  }    
+  }
 };
 // возвращает одну записть по её ID
 exports.get = function (req, res) {
@@ -42,5 +43,5 @@ exports.get = function (req, res) {
     });
   } else {
     res.sendStatus(401); // не авторизован
-  }  
+  }
 };

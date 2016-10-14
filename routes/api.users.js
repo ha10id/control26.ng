@@ -23,6 +23,7 @@ exports.list = function (req, res) {
           lastName: data.lastName,
           middleName: data.middleName,
           email: data.email,
+          _group: data.group,
           group: {id: data.group, name: ''},
           uid: data.uid,
           regdate: data.regdate
