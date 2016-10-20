@@ -9,7 +9,7 @@ block body
     .navbar.navbar-default
       .container-fluid
         .navbar-header
-          button.navbar-toggle.collapsed(data-toggle='collapse', data-target='.navbar-collapse')
+          button.navbar-toggle.collapsed(data-toggle="collapse", data-target=".navbar-collapse")
             span.sr-only Toggle navigation
             span.icon-bar
             span.icon-bar
@@ -21,18 +21,22 @@ block body
         .navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-right
             li
-              a(href="/") главная
-            li(ng-if="isAuthorized")
-              a(href="/personalArea") личный кабинет
-            li(ng-if="isAdmin")
-              a(href="/adminPanel") администрирование
-            li(ng-if="isAuthorized")
-              a(href="/logout") выход
-            li(ng-if="!isAuthorized")
-              a(href="/login") вход
-              //- a(href="javascript: document.location.href='/login';") вход
+              a(href='/') главная
+            li(ng-if='isAuthorized')
+              a(href='/personalArea') {{currentUser.name}}
+                //- div.name
+                //-   p {{currentUser.name}}
+                //-   span.label.label-info личный кабинет
+            li(ng-if='isAdmin')
+              a(href='/adminPanel') администрирование
+            li(ng-if='isAuthorized')
+              //- a(href="/logout") выход
+              a(href='javascript: document.location.href=\'/SingleLogout\';') выход
+            li(ng-if='!isAuthorized')
+              //- a(href="/login") вход
+              a(href='javascript: document.location.href=\'/login\';') вход
     div(ng-view)
-    img.hd(src="img/footer.jpg")
+    img.hd(src='img/footer.jpg')
 
   script(src='libs/angular/angular.min.js')
   script(src='libs/angular-locale/locale-ru-ru.js')

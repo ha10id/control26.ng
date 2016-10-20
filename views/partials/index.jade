@@ -1,7 +1,8 @@
 .jumborton
   form
     .form-group(ng-init="iStatus={status:1}")
-      #YMapsID.tb-tooltip(title="Создайте новое обращение указав на карте географическое положение (щёлкнуть левой кнопкой 'мыши').")
+      //- #YMapsID.tb-tooltip(title="Создайте новое обращение указав на карте географическое положение (щёлкнуть левой кнопкой 'мыши').")
+      #YMapsID
         ya-map(ya-zoom="12", ya-event-click="mapClick($event)")
           ya-cluster
             ya-geo-object(ng-repeat="document in filterDocuments =(documents | filter:query | filter:iStatus) | startFrom:currentPage*pageSize | limitTo:pageSize", ya-source='document.geoObject')

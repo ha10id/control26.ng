@@ -5,10 +5,10 @@ var User 	= require('./models/User.js');
 //========================================================
 // Create service provider
 var sp_options = {
-        entity_id: "https://test.control26.ru",
+        entity_id: "https://gibdd.control26.ru",
         private_key: fs.readFileSync("ssl/server.key").toString(),
         certificate: fs.readFileSync("ssl/server.crt").toString(),
-        assert_endpoint: "https://test.control26.ru/assert",
+        assert_endpoint: "https://gibdd.control26.ru/assert",
         force_authn: true,
         sign_get_request: true,
         allow_unencrypted_assertion: false
@@ -20,9 +20,9 @@ var sp = new saml2.ServiceProvider(sp_options);
 var metadata = sp.create_metadata();
 // Create identity provider
 var idp_options = {
-    sso_login_url: "https://esia.gosuslugi.ru/idp/profile/SAML2/Redirect/SSO",
-    sso_logout_url: "https://esia.gosuslugi.ru/idp/profile/SAML2/Redirect/SLO",
-    certificates: [fs.readFileSync("ssl/esia.crt").toString()]
+    sso_login_url: "https://esia-portal1.test.gosuslugi.ru/idp/profile/SAML2/Redirect/SSO",
+    sso_logout_url: "https://esia-portal1.test.gosuslugi.ru/idp/profile/SAML2/Redirect/SLO",
+    certificates: [fs.readFileSync("ssl/esia-test.crt").toString()]
 };
 
 var idp = new saml2.IdentityProvider(idp_options);
@@ -38,7 +38,7 @@ exports.logout = function(req, res) {
   console.log('---     logout from server          ---');
   console.log('---------------------------------------');
   req.session.destroy();
-  res.redirect("/");
+  res.redirect(301, "/");
 };
 
 // Starting point for login
@@ -46,36 +46,68 @@ exports.login = function(req, res) {
   console.log('---------------------------------------');
   console.log('---     login on server             ---');
   console.log('---------------------------------------');
-  var user = {
-    _id: "57d26e026e4edc261c01573d",
-    // _id: "57a98bfc9204b1760f00005f",
-    group: 3,
-    email: "achiduzu@gmail.com",
-    name: "Сигизмунд Петрович Кац",
-    firstName: "Сигизмунд",
-    middleName: "Петрович",
-    lastName: "Кац"
-  };
-  req.session.isadmin = false;
-  req.session.ismoderator = false;
-  // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
-  if (user.group === 3 ) {
-    req.session.isadmin = true;
-  }
-  if (user.group === 2 ) {
-    req.session.ismoderator = true;
-  }
-  req.session.currentUser = user;
-  req.session.authorized = true;
-  res.redirect("/");
+  console.log(res.rawHeaders);
 
-    // sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
-    //     if (err !== null)
-    //         return res.send(500);
-    //     console.log(login_url);
-    //     res.redirect(login_url);
-    // });
+  // var user = {
+  //   _id: "57d26e026e4edc261c01573d",
+  //   // _id: "57a98bfc9204b1760f00005f",
+  //   group: 3,
+  //   email: "achiduzu@gmail.com",
+  //   name: "Сигизмунд Петрович Кац",
+  //   firstName: "Сигизмунд",
+  //   middleName: "Петрович",
+  //   lastName: "Кац"
+  // };
+  // req.session.isadmin = false;
+  // req.session.ismoderator = false;
+  // // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
+  // if (user.group === 3 ) {
+  //   req.session.isadmin = true;
+  // }
+  // if (user.group === 2 ) {
+  //   req.session.ismoderator = true;
+  // }
+  // req.session.currentUser = user;
+  // req.session.authorized = true;
+  // res.redirect("/");
+
+  sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
+      if (err !== null)
+          return res.send(500);
+      console.log(login_url);
+      // res.header.Access-Control-Allow-Origin = 'https://gibdd.control26.ru';
+      return res.redirect(301, login_url);
+  });
 };
+// // Starting point for logout
+exports.singleLogout = function(req, res) {
+    var options = {
+        name_id: req.session.name_id,
+        session_index: req.session.index
+    };
+    // console.dir(options);
+    sp.create_logout_request_url(idp, options, function(err, logout_url) {
+        if (err !== null)
+            return res.send(500);
+        res.redirect(logout_url);
+    });
+};
+
+exports.singleLogoutResponse = function(req, res) {
+    if (req.session) {
+        // console.log(req.currentUser.email);
+        // LoginToken.remove({ email: req.currentUser.email }, function() {});
+        res.clearCookie('logintoken');
+        // req.session.destroy(function() {});
+    }
+    console.log('-------------------------------------------------------------')
+    console.log(req.session);
+
+    req.session.destroy();
+    // isLoginESIA = false;
+    res.redirect('/');
+};
+
 // Assert endpoint for when login completes
 exports.assert = function(req, res, next) {
   // console.dir(JSON.stringify(req.body));
@@ -101,9 +133,54 @@ exports.assert = function(req, res, next) {
     uin.firstName = attr['urn:mace:dir:attribute:firstName'];
     uin.lastName = attr['urn:mace:dir:attribute:lastName'];
 
+    // -----------------------------------Full ESIA fields ----------------------------------------------------------------------------------------
+        uin.userName = attr['urn:esia:userName'];      //-Логин пользователя
+        uin.deviceType = attr['urn:esia:deviceType'];  //-Тип носителя СКП, используемого при авторизации по ЭП
+        uin.personType = attr['urn:esia:personType'];  //-Категория пользователя-->
+        uin.userId = attr['urn:mace:dir:attribute:userId'];    //-Уникальный идентификатор пользователя в рамках поставщика идентификации
+        uin.authnMethod = attr['Name="urn:esia:authnMethod'];  //-Метод аутентификации с помощью которого пользователь прошел аутентификацию
+        uin.globalRole = attr['urn:esia:globalRole'];  //-Роль под которой аутентифицировался пользователь-->
+        uin.birthDate = attr['urn:esia:birthDate'];
+        uin.lastName = attr['urn:mace:dir:attribute:lastName'];    //-Фамилия пользователя
+        uin.firstName = attr['urn:mace:dir:attribute:firstName'];  //-Имя пользователя
+        uin.gender = attr['urn:esia:gender'];
+        uin.middleName = attr['urn:mace:dir:attribute:middleName'];//-Отчество пользователя
+        uin.memberOfGroups = attr['urn:esia:memberOfGroups'];
+        uin.personINN = attr['urn:esia:personINN'];      //-ИНН пользователя
+        uin.personSNILS = attr['urn:esia:personSNILS'];  //-СНИЛС пользователя
+        uin.personOGRN = attr['urn:esia:personOGRN'];    //-ОГРНИП пользователя
+        uin.personEMail = attr['urn:esia:personEMail'];  //-Электронный адрес пользователя
+        uin.systemAuthority = attr['urn:esia:systemAuthority'];  //-Полномочия пользователя в системе, которая запрашивает аутентификацию
+        uin.orgType = attr['urn:esia:orgType'];          //-Тип организации пользователя
+        uin.orgName = attr['urn:esia:orgName'];          //-Имя организации пользователя
+        uin.orgOGRN = attr['urn:esia:orgOGRN'];          //-ОГРН организации пользователя
+        uin.orgINN = attr['urn:esia:orgINN'];            //-ИНН организации пользователя
+        uin.orgPosition = attr['urn:esia:orgPosition'];  //-Должность пользователя в организации
+
+
+
+
+    // uin.orgAddresses = attr['urn:esia:orgAddresses'];
+    // uin.orgBranchKPP = attr['urn:esia:orgBranchKPP'];
+    // uin.orgBranchName = attr['urn:esia:orgBranchName'];
+    // uin.orgContacts = attr['urn:esia:orgContacts'];
+    // uin.orgOid = attr['urn:esia:orgOid'];
+    // uin.orgKPP = attr['urn:esia:orgKPP'];
+    // uin.orgLegalForm = attr['urn:esia:orgLegalForm'];
+    // uin.orgShortName = attr['urn:esia:orgShortName'];
+    // uin.personCitizenship = attr['urn:esia:personCitizenship'];
+    // uin.personMobilePhone = attr['urn:esia:personMobilePhone'];
+    // uin.personTrusted = attr['urn:esia:personTrusted'];
+    // uin.principalContacts = attr['urn:esia:principalContacts'];
+    // uin.principalDocuments = attr['urn:esia:principalDocuments'];
+    // uin.principalAddresses = attr['urn:esia:principalAddresses'];
+    // uin.assuranceLevel = attr['urn:esia:assuranceLevel'];
+
+
+
     // req.session.user_id = 0;
     // поищем пользователя
-    User.findOne({ 'uid': uin.uid }, { id: 1, group: 1, name: 1, email: 1 }, function(err, user) {
+    User.findOne({ 'uid': uin.uid }, function(err, user) {
       if (user) {
           //   req.currentUser = user;
           req.session.user_id = user.id;
@@ -122,14 +199,31 @@ exports.assert = function(req, res, next) {
           user.group = 1;
           user.save();
       }
-      // console.dir(user);
+      console.log('--assert login from ESIA---------------')
+      console.log('-- uin                               --')
+      console.log(uin);
+      console.log('-- user                              --')
+      console.log(user);
+      req.session.isadmin = false;
+      req.session.ismoderator = false;
+
       req.session.name = user.name;
       req.session.currentUser = user;
-      if(user.group == 3) {
-          req.session.isadmin = true;
+      if (user.group === 3 ) {
+        req.session.isadmin = true;
       }
+      if (user.group === 2 ) {
+        req.session.ismoderator = true;
+      }
+      req.session.currentUser = user;
       req.session.authorized = true;
-      res.redirect('/');
+      res.redirect(301, "/");
+
+      // if(user.group == 3) {
+      //     req.session.isadmin = true;
+      // }
+      // req.session.authorized = true;
+      // res.redirect('/');
     });
   });
 };

@@ -12,7 +12,7 @@
 .form-group
     label(for='category') категория:
     input.form-control(readonly="readonly", ng-model='category.name', name='category')
-.form-group
+.form-group(ng-if="twoCols")
     #YMapsID.col-md-8
         ya-map(ya-zoom="17", ya-center="{{map.center}}")
             //- ya-map(ya-center="map.center", ya-zoom="map.zoom")
@@ -21,6 +21,16 @@
         .row
             .col-md-6(style="padding: 2px 2px 2px 2px", ng-repeat="image in document.images" )
                 img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%")
+.form-group(ng-if="oneCols")
+    #YMapsID.col-md-10
+        ya-map(ya-zoom="17", ya-center="{{map.center}}")
+            //- ya-map(ya-center="map.center", ya-zoom="map.zoom")
+            ya-geo-object(ng-model='map.point', ya-source='map.point')
+    #RightBox.col-md-2
+        .row
+            .col-md-6(style="padding: 2px 2px 2px 2px", ng-repeat="image in document.images" )
+                img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%")
+
 .form-group
     label(for='description') описание:
     textarea.form-control(readonly="readonly", rows='5') {{document.description}}

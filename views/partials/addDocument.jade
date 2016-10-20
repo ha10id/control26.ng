@@ -12,7 +12,7 @@
     input.form-control(ng-model='form.address', name='address', ng-required="true", placeholder="переместите метку на карте для автоматического заполнения")
 .form-group
     label(for="category") Категория
-    select.form-control(name="category", ng-model="category", ng-required="true", ng-options="c as c.name for c in categories track by c._id")
+    select.form-control(name="category", ng-model="category", ng-required="true", ng-options="c as c.name for c in categories track by c.id")
 .form-group
     #YMapsID.col-md-8
         ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-before-init="beforeInit()")

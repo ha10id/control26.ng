@@ -1,13 +1,35 @@
-function LoginCtrl($rootScope, $http, AuthService, $log) {
+function LoginCtrl($rootScope, $http, AuthService, $location, $log) {
   'use strict';
   $log.info('login controller');
+  // var url = "https://gibdd.control26.ru/login";
+  // $http({
+  //   method: 'GET',
+  //   dataType: 'jsonp',
+  //   url: url
+  // }).
+  // success(function(status) {
+  //   AuthService.getSession();
+  //   $rootScope.currentUser = AuthService.status.user;
+  //   $rootScope.isAdmin = AuthService.status.admin;
+  //   $rootScope.isAuthorized = true;
+  //   $log.info('пользователь: ', $rootScope.currentUser);
+  //   history.back();
+  // }).
+  // error(function(status) {
+  //   console.log(status);
+  // });
+
   $http.get('/login').success(function(data) {
     AuthService.getSession();
     $rootScope.currentUser = AuthService.status.user;
     $rootScope.isAdmin = AuthService.status.admin;
     $rootScope.isAuthorized = true;
     $log.info('пользователь: ', $rootScope.currentUser);
-    history.back();
+    $location.url(headers.Location);
+    // history.back();
+  }).
+  error(function(status) {
+    console.log(status);
   });
 }
 
@@ -34,11 +56,11 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   $scope.filterDocuments = [];
   // заливаем объекты Documents и Cate скоуп
   $scope.documents = Documents.query();
-  $scope.categories = Categories.query();
+  // $scope.categories = Categories.query();
   // $scope.url = $location.url();
   // AuthService.getSession();
   // var user = AuthService.testLogin();
-  // $log.info(user);
+  $log.info($scope.currentUser);
   // вешаем событие на click на карте
   $scope.mapClick = function(e){
     var coords = e.get('coords');
@@ -70,6 +92,8 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
 function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories, $log) {
   'use strict';
   var data = Documents.get({id: $routeParams.id}, function(){
+    $scope.twoCols = false;
+    $scope.oneCols = true;
     $scope.document = data;
     $scope.category =  Categories.get({id: data.category});
     // широта latitude (45) долгота longitude (41)
@@ -92,6 +116,8 @@ function EditDocumentCtrl($scope, $location, $routeParams, AuthService, Document
   $scope.form = {};
   // вешаем событие на dragend маркера
   $log.info('-------------controller edit document-----------------');
+  $scope.twoCols = false;
+  $scope.oneCols = true;
   $scope.dragEnd = function(e){
     var coords = e.get('target').geometry.getCoordinates();
     ymaps.geocode([coords[0], coords[1]], { results: 1 }).then(function (res) {
@@ -244,7 +270,7 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories,
   $scope.form.longitude = $routeParams.longitude;
   // список категорий
   $scope.categories = Categories.query();
-  $scope.category =  [{_id: 0, name: "выберите категорию"}];
+  $scope.category =  {};
 
   $scope.form.images = [];
 
@@ -292,7 +318,8 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories,
 
   // функция сохранения обращения
   $scope.submit = function () {
-    $scope.form.category = $scope.category._id;
+    $log.info('категория: ', $scope.category);
+    $scope.form.category = $scope.category.id;
     var newDocument = new Documents($scope.form);
 
     newDocument.$save().then(
@@ -319,7 +346,7 @@ function AddDocumentCtrl($scope, $location, $routeParams, Documents, Categories,
 }
 
 // главная страница личного кабинета
-function PersonalAreaCtrl($scope, $http, $location, $routeParams, AuthService, myDocuments, Categories, Users, $log) {
+function PersonalAreaCtrl($scope, $http, $location, $routeParams, AuthService, myDocuments, modDocuments, Categories, Users, $log) {
   'use strict';
   AuthService.getSession();
   // подготовим пагинатор
@@ -329,15 +356,26 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, AuthService, m
   $scope.url = $location.url();
   // заливаем объекты myDocuments и Categories в скоуп
   // api сам решает какие документы нам отдать
-  $scope.documents = myDocuments.query();
-  $scope.categories = Categories.query();
-
+  // $log.info($rootScope.currentUser);
   var status = AuthService.getStatus();
-
-  // $log.info('статус: ', status);
+  $log.info('статус: ', status);
+  $log.info('пользователь: ', status.user.group);
   if(status.authorized) {
     $scope.user = status.user;
   };
+
+  if (status.user.group == 2) {
+    // список обращений в ЛК модератора
+    $scope.documents = modDocuments.query();
+  } else {
+    // список обращений в ЛК пользователя или администратора
+    $scope.documents = myDocuments.query();
+  };
+
+  // $log.info('записей: ', $scope.documents.count());
+
+  $scope.categories = Categories.query();
+
   // показывать обращения в работе
   $scope.iStatus = {status: 1};
   // $scope.user = currentUser();

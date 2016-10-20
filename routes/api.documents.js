@@ -40,16 +40,36 @@ exports.list = function (req, res) {
       res.json(documents); // return all documents in JSON format
     }).sort({datestamp: -1});
 };
-// список документов по владельцу +
-exports.listMyDocuments = function (req, res) {
+
+function CategoriesByModerator(idUser, callback) {
+  Goverment.findOne({_worker: idUser}, function(err, ogv) {
+    Category.find({_ogv: ogv._id}, function(err, cat) {
+      cat = cat.map(function(data) {
+        return {
+          id: data._id
+        };
+      });
+      callback(cat);
+    })
+  })
+};
+
+// список документов по модератору +
+// exports.listDocumentsByModerator = function (req, res) {
+exports.listDocumentsByModerator = function (req, res) {
   'use strict';
-  if (req.session.authorized) {
-    if (req.session.isadmin) {
-      var filter = {};
-    } else {
-      var owner = req.session.currentUser._id;
-      var filter = {_creator: owner};
-    }
+  console.log("--list by moderator---------------------------");
+  console.log(req.session.currentUser._id);
+  CategoriesByModerator(req.session.currentUser._id, function(categories) {
+    console.log(categories);
+    console.log(categories.length);
+    var arrCategories = [];
+    for (var i = 0; i < categories.length; i++) {
+      arrCategories[i] = categories[i].id;
+    };
+    console.log(arrCategories);
+    var filter = {category: {$in: arrCategories}};
+    console.log(filter);
     Document.find(filter, function(err, documents) {
       if (err) {
         res.send(err);
@@ -69,6 +89,43 @@ exports.listMyDocuments = function (req, res) {
           geoObject: data.geoObject
         };
       });
+        res.json(documents); // return all documents in JSON format
+      }).sort({datestamp: -1});
+  })
+};
+
+// список документов по владельцу +
+exports.listMyDocuments = function (req, res) {
+  'use strict';
+  console.log("--list my documents---------------------------");
+  if (req.session.authorized) {
+    if (req.session.isadmin) {
+      var filter = {};
+    } else {
+      var owner = req.session.currentUser._id;
+      var filter = {_creator: owner};
+    };
+
+    Document.find(filter, function(err, documents) {
+      if (err) {
+        res.send(err);
+      }
+      documents = documents.map(function(data) {
+        return {
+          id: data.id,
+          name: data.name,
+          title: data.title,
+          address: data.address,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          description: data.description,
+          status: data.status,
+          astatus: data.istatus,
+          datestamp: data.datestamp,
+          geoObject: data.geoObject
+        };
+      });
+        // console.dir(documents);
         res.json(documents); // return all documents in JSON format
       }).sort({datestamp: -1});
   } else {
@@ -189,7 +246,7 @@ exports.imageUpload = function (req, res, next) {
       if (!d) return next(new NotFound('Document not found'));
       console.log("изображений в документе: ", d.images.length);
 
-      if (d.images.length < 4) {
+      if (d.images.length < 6) {
         d.images.push(fileName);
         d.save();
         console.log("файл добавлен в конец документа");

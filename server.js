@@ -59,6 +59,14 @@
   var categories = require('./routes/api.categories');
   var goverments = require('./routes/api.goverments');
   var loaduser   = require('./routes/api.auphorize')
+
+app.all("/login", function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+    return next();
+});
+
 // Routes ==================================================
   app.get('/', routes.index);
   app.get('/partials/:name', routes.partials);
@@ -67,6 +75,8 @@
   // login
   app.get('/login', login.login);
   app.get('/logout', login.logout);
+  app.get('/SingleLogout', login.singleLogout);
+  app.get('/SingleLogoutResponse?', login.singleLogoutResponse);
   app.get('/metadata.xml', login.getMetadata);
   app.post('/assert', login.assert);
   // пользователи
@@ -83,6 +93,7 @@
   // обращения
   app.get('/api/documents', loaduser.loadUser, documents.list);
   app.get('/api/mydocuments', loaduser.loadUser, documents.listMyDocuments);
+  app.get('/api/docbymoderator', loaduser.loadUser, documents.listDocumentsByModerator);
   app.get('/api/documents/:id', loaduser.loadUser, documents.get);
   app.post('/api/documents', loaduser.loadUser, documents.add);
   app.put('/api/documents/:id', loaduser.loadUser, documents.edit);

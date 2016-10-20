@@ -4,61 +4,61 @@
 Рекомендуется, чтобы значение атрибута entityID соответствовало домену информационной системы. Например, http://moscow.rt.ru
 -->
 <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:esia="urn:esia:shibboleth:2.0:mdext"
-	entityID="https://test.control26.ru">
+	entityID="https://gibdd.control26.ru">
    <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
       <md:KeyDescriptor use="signing">
          <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
             <ds:X509Data>
-               <ds:X509Certificate>MIIEBTCCAu2gAwIBAgIJAMJOpYkM36tMMA0GCSqGSIb3DQEBCwUAMIGYMQswCQYD
+               <ds:X509Certificate>MIIEBzCCAu+gAwIBAgIJAN2s19HntKFyMA0GCSqGSIb3DQEBCwUAMIGZMQswCQYD
 VQQGEwJSVTEaMBgGA1UECAwRU3RhdnJvcG9sc2t5IGtyYXkxEjAQBgNVBAcMCVN0
-YXZyb3BvbDEOMAwGA1UECgwFR0tVU0sxDTALBgNVBAsMBE1haW4xGjAYBgNVBAMM
-EXRlc3QuY29udHJvbDI2LnJ1MR4wHAYJKoZIhvcNAQkBFg9hZG1pbkBjaXQtc2su
-cnUwHhcNMTYwNjI0MDY0MTM1WhcNMTkwNTE5MDY0MTM1WjCBmDELMAkGA1UEBhMC
-UlUxGjAYBgNVBAgMEVN0YXZyb3BvbHNreSBrcmF5MRIwEAYDVQQHDAlTdGF2cm9w
-b2wxDjAMBgNVBAoMBUdLVVNLMQ0wCwYDVQQLDARNYWluMRowGAYDVQQDDBF0ZXN0
-LmNvbnRyb2wyNi5ydTEeMBwGCSqGSIb3DQEJARYPYWRtaW5AY2l0LXNrLnJ1MIIB
-IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5kosnyvL/qf4wf6+K4DyjLfq
-MuoAFuQyglu44Setk3YWBBAh8RkSK6ukLJswLlO8irmopJlPY0ehaV6qKelitPl9
-1trEhUjYyZ9QZ2miBGYu+vIDe78PxOcZgpIbju1ko6KuLqYEuJoL3UyPHGRbx1AD
-jI4L9m0I99q17FUcZ/GTfFn0vNaKTdkVDkgj0TteMO+IOV9K7Rpt8YTtv8R6W6Ux
-su18GSO/r/pNwkOKZEYvbxIm8nfOvp6KUSgkWn0d+BoLuFF4vI5gAWdQ6YSDlV+w
-ch8rBG4AaEnEwchOEHXrvtN666KMn7O1ZUKwsTks2stboxk1ea9UEXUoQf7LXwID
-AQABo1AwTjAdBgNVHQ4EFgQUwqwi/uw7va38NuSR/DXuAzHTMyYwHwYDVR0jBBgw
-FoAUwqwi/uw7va38NuSR/DXuAzHTMyYwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0B
-AQsFAAOCAQEANJMVHpA26hmSWQMu0mlcinJbL24qelUqF58j52nJj0dbvcarWDZj
-4ewCSBAKXKnAwZWlyx/5lHTIzm60ASOmpEJE2UwYQPAEMxMug8IWd/Dkxvlb9PuH
-58x6BymSI8RwnTrZvwN8LfUSQFqfvIjPHPsGYipMSUMqmQVCTxy8FMlB+ga7XQBO
-JM7F358KPYhBIoiinpqAyr3rRYUG+g9yA6eVCdF9gH1lm75ZFIe+L/HVOO9qQxRi
-a9YBYtOItyoUkN+NxaEzkrFtTpc/tFGmF8KmyA0UT15I0SYjhBPhCih023bO/AM+
-7VXdZOeay75TRLpgAOYPGXVi+wJZkbkIBA==</ds:X509Certificate>
+YXZyb3BvbDEOMAwGA1UECgwFR0tVU0sxDTALBgNVBAsMBE1haW4xGzAZBgNVBAMM
+EmdpYmRkLmNvbnRyb2wyNi5ydTEeMBwGCSqGSIb3DQEJARYPYWRtaW5AY2l0LXNr
+LnJ1MB4XDTE2MTAxMDA3MTcyOVoXDTI2MTAxMDA3MTcyOVowgZkxCzAJBgNVBAYT
+AlJVMRowGAYDVQQIDBFTdGF2cm9wb2xza3kga3JheTESMBAGA1UEBwwJU3RhdnJv
+cG9sMQ4wDAYDVQQKDAVHS1VTSzENMAsGA1UECwwETWFpbjEbMBkGA1UEAwwSZ2li
+ZGQuY29udHJvbDI2LnJ1MR4wHAYJKoZIhvcNAQkBFg9hZG1pbkBjaXQtc2sucnUw
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/RDtq4Th5kdsbGC5kEmbP
+D90Z9dT3Wn9ReaF+UeJjwXU9feo5EAS3pWxX1t0XZ5pBJa7oMc2avEEIyp5Gufli
+JgMqIuop1wr8ZMFy2TKqGR7maym/K+fkTyjDqqk/3TnE4Td3GehnAfpsDGAXjDPi
+BKpc7bOTyYciY2W5fvsImyvcyPFC658yx+IbfLEi2gYxbs9WvJdFvoajHO7bYSLx
+yPpzT2j7hKngZJvzKB45oLhmg0CR/qsKHiidWdRjep/KSFhEjrm11j47taXwZvKK
+zyZb9nFGFrChiTSYeYiedzf/810BSXwHSXBxKAh0l7ylIKyxQpG85/ZS/abrlybn
+AgMBAAGjUDBOMB0GA1UdDgQWBBSAX366m9mE17+gWO0NB5CafIVpgzAfBgNVHSME
+GDAWgBSAX366m9mE17+gWO0NB5CafIVpgzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3
+DQEBCwUAA4IBAQCyoLbXgWdng2fZ8cAHnFQObQLfqnzRlwvInXqoMQMZP5ZxxJN0
+nw7WQBbQE9h/pzWNybMCYxR+5ILDJ1I9rikABLfSwKw1W/SpGxyg6OIYAuyrmJNc
+Ozfk/SJjuWdReneMZTOu8DkAseuFB3r34zddKOBBbn8a9h2+Kg3VhrH/bM8mMS92
+31D67Ms2aL30wqyKjOzcHuajyOuWYb3l8HN/4hfG8Um4O5MLOXO79lpWi9Pp0wYV
+5jhYXsGWTQ5VcXKCy5HZ6QRknc/V9/V1HwWITtnVBl3weyHdah7ZDEmfE+0GQFqM
+RpcTwZLtKIBDjYZYQvKnzHY/hlHoZAREqd4+</ds:X509Certificate>
             </ds:X509Data>
          </ds:KeyInfo>
       </md:KeyDescriptor>
       <md:KeyDescriptor use="encryption">
          <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
             <ds:X509Data>
-               <ds:X509Certificate>MIIEBTCCAu2gAwIBAgIJAMJOpYkM36tMMA0GCSqGSIb3DQEBCwUAMIGYMQswCQYD
+               <ds:X509Certificate>MIIEBzCCAu+gAwIBAgIJAN2s19HntKFyMA0GCSqGSIb3DQEBCwUAMIGZMQswCQYD
 VQQGEwJSVTEaMBgGA1UECAwRU3RhdnJvcG9sc2t5IGtyYXkxEjAQBgNVBAcMCVN0
-YXZyb3BvbDEOMAwGA1UECgwFR0tVU0sxDTALBgNVBAsMBE1haW4xGjAYBgNVBAMM
-EXRlc3QuY29udHJvbDI2LnJ1MR4wHAYJKoZIhvcNAQkBFg9hZG1pbkBjaXQtc2su
-cnUwHhcNMTYwNjI0MDY0MTM1WhcNMTkwNTE5MDY0MTM1WjCBmDELMAkGA1UEBhMC
-UlUxGjAYBgNVBAgMEVN0YXZyb3BvbHNreSBrcmF5MRIwEAYDVQQHDAlTdGF2cm9w
-b2wxDjAMBgNVBAoMBUdLVVNLMQ0wCwYDVQQLDARNYWluMRowGAYDVQQDDBF0ZXN0
-LmNvbnRyb2wyNi5ydTEeMBwGCSqGSIb3DQEJARYPYWRtaW5AY2l0LXNrLnJ1MIIB
-IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5kosnyvL/qf4wf6+K4DyjLfq
-MuoAFuQyglu44Setk3YWBBAh8RkSK6ukLJswLlO8irmopJlPY0ehaV6qKelitPl9
-1trEhUjYyZ9QZ2miBGYu+vIDe78PxOcZgpIbju1ko6KuLqYEuJoL3UyPHGRbx1AD
-jI4L9m0I99q17FUcZ/GTfFn0vNaKTdkVDkgj0TteMO+IOV9K7Rpt8YTtv8R6W6Ux
-su18GSO/r/pNwkOKZEYvbxIm8nfOvp6KUSgkWn0d+BoLuFF4vI5gAWdQ6YSDlV+w
-ch8rBG4AaEnEwchOEHXrvtN666KMn7O1ZUKwsTks2stboxk1ea9UEXUoQf7LXwID
-AQABo1AwTjAdBgNVHQ4EFgQUwqwi/uw7va38NuSR/DXuAzHTMyYwHwYDVR0jBBgw
-FoAUwqwi/uw7va38NuSR/DXuAzHTMyYwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0B
-AQsFAAOCAQEANJMVHpA26hmSWQMu0mlcinJbL24qelUqF58j52nJj0dbvcarWDZj
-4ewCSBAKXKnAwZWlyx/5lHTIzm60ASOmpEJE2UwYQPAEMxMug8IWd/Dkxvlb9PuH
-58x6BymSI8RwnTrZvwN8LfUSQFqfvIjPHPsGYipMSUMqmQVCTxy8FMlB+ga7XQBO
-JM7F358KPYhBIoiinpqAyr3rRYUG+g9yA6eVCdF9gH1lm75ZFIe+L/HVOO9qQxRi
-a9YBYtOItyoUkN+NxaEzkrFtTpc/tFGmF8KmyA0UT15I0SYjhBPhCih023bO/AM+
-7VXdZOeay75TRLpgAOYPGXVi+wJZkbkIBA==</ds:X509Certificate>
+YXZyb3BvbDEOMAwGA1UECgwFR0tVU0sxDTALBgNVBAsMBE1haW4xGzAZBgNVBAMM
+EmdpYmRkLmNvbnRyb2wyNi5ydTEeMBwGCSqGSIb3DQEJARYPYWRtaW5AY2l0LXNr
+LnJ1MB4XDTE2MTAxMDA3MTcyOVoXDTI2MTAxMDA3MTcyOVowgZkxCzAJBgNVBAYT
+AlJVMRowGAYDVQQIDBFTdGF2cm9wb2xza3kga3JheTESMBAGA1UEBwwJU3RhdnJv
+cG9sMQ4wDAYDVQQKDAVHS1VTSzENMAsGA1UECwwETWFpbjEbMBkGA1UEAwwSZ2li
+ZGQuY29udHJvbDI2LnJ1MR4wHAYJKoZIhvcNAQkBFg9hZG1pbkBjaXQtc2sucnUw
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC/RDtq4Th5kdsbGC5kEmbP
+D90Z9dT3Wn9ReaF+UeJjwXU9feo5EAS3pWxX1t0XZ5pBJa7oMc2avEEIyp5Gufli
+JgMqIuop1wr8ZMFy2TKqGR7maym/K+fkTyjDqqk/3TnE4Td3GehnAfpsDGAXjDPi
+BKpc7bOTyYciY2W5fvsImyvcyPFC658yx+IbfLEi2gYxbs9WvJdFvoajHO7bYSLx
+yPpzT2j7hKngZJvzKB45oLhmg0CR/qsKHiidWdRjep/KSFhEjrm11j47taXwZvKK
+zyZb9nFGFrChiTSYeYiedzf/810BSXwHSXBxKAh0l7ylIKyxQpG85/ZS/abrlybn
+AgMBAAGjUDBOMB0GA1UdDgQWBBSAX366m9mE17+gWO0NB5CafIVpgzAfBgNVHSME
+GDAWgBSAX366m9mE17+gWO0NB5CafIVpgzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3
+DQEBCwUAA4IBAQCyoLbXgWdng2fZ8cAHnFQObQLfqnzRlwvInXqoMQMZP5ZxxJN0
+nw7WQBbQE9h/pzWNybMCYxR+5ILDJ1I9rikABLfSwKw1W/SpGxyg6OIYAuyrmJNc
+Ozfk/SJjuWdReneMZTOu8DkAseuFB3r34zddKOBBbn8a9h2+Kg3VhrH/bM8mMS92
+31D67Ms2aL30wqyKjOzcHuajyOuWYb3l8HN/4hfG8Um4O5MLOXO79lpWi9Pp0wYV
+5jhYXsGWTQ5VcXKCy5HZ6QRknc/V9/V1HwWITtnVBl3weyHdah7ZDEmfE+0GQFqM
+RpcTwZLtKIBDjYZYQvKnzHY/hlHoZAREqd4+</ds:X509Certificate>
             </ds:X509Data>
          </ds:KeyInfo>
       </md:KeyDescriptor>
@@ -68,13 +68,13 @@ a9YBYtOItyoUkN+NxaEzkrFtTpc/tFGmF8KmyA0UT15I0SYjhBPhCih023bO/AM+
   - ResponseLocation - endpoint URL обработчика событий сервис провайдера, отвечающего за обработку сообщений от поставщика идентификации об успешном выполнении операции завершения сессии пользователя.
 -->
       <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-	  Location="https://test.control26.ru/SingleLogout"
-	  ResponseLocation="https://test.control26.ru/SingleLogoutResponse"/>
+	  Location="https://gibdd.control26.ru/SingleLogout"
+	  ResponseLocation="https://gibdd.control26.ru/SingleLogoutResponse"/>
 <!--TODO
 Необходимо заполнить атрибут Location тэга AssertionConsumerService, определяющий endpoint обработчика событий сервис провайдера, отвечающего за обработку ответа от поставщика идентификации на AuthnRequest запрос сервис провайдера.
 -->
       <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-	  Location="https://test.control26.ru/assert" index="0" isDefault="true"/>
+	  Location="https://gibdd.control26.ru/assert" index="0" isDefault="true"/>
    </md:SPSSODescriptor>
    <md:AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
         <saml:Attribute NameFormat="urn:mace:shibboleth:1.0:nameIdentifier" Name="transientId"></saml:Attribute><!--Сессионый идентификатор запроса сервис провайдера-->

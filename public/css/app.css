@@ -42,7 +42,11 @@ body {
     background: #dfe7e7 !important;
     font-weight: normal;
 }
-
+.name {
+    text-align: center;
+    line-height: 7px;
+    width: 100%;
+}
 .navbar {
     min-height: 40px;
 }
