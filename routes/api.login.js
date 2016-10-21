@@ -48,36 +48,36 @@ exports.login = function(req, res) {
   console.log('---------------------------------------');
   console.log(res.rawHeaders);
 
-  // var user = {
-  //   _id: "57d26e026e4edc261c01573d",
-  //   // _id: "57a98bfc9204b1760f00005f",
-  //   group: 3,
-  //   email: "achiduzu@gmail.com",
-  //   name: "Сигизмунд Петрович Кац",
-  //   firstName: "Сигизмунд",
-  //   middleName: "Петрович",
-  //   lastName: "Кац"
-  // };
-  // req.session.isadmin = false;
-  // req.session.ismoderator = false;
-  // // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
-  // if (user.group === 3 ) {
-  //   req.session.isadmin = true;
-  // }
-  // if (user.group === 2 ) {
-  //   req.session.ismoderator = true;
-  // }
-  // req.session.currentUser = user;
-  // req.session.authorized = true;
-  // res.redirect("/");
+  var user = {
+    _id: "57d26e026e4edc261c01573d",
+    // _id: "57a98bfc9204b1760f00005f",
+    group: 3,
+    email: "achiduzu@gmail.com",
+    name: "Сигизмунд Петрович Кац",
+    firstName: "Сигизмунд",
+    middleName: "Петрович",
+    lastName: "Кац"
+  };
+  req.session.isadmin = false;
+  req.session.ismoderator = false;
+  // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
+  if (user.group === 3 ) {
+    req.session.isadmin = true;
+  }
+  if (user.group === 2 ) {
+    req.session.ismoderator = true;
+  }
+  req.session.currentUser = user;
+  req.session.authorized = true;
+  res.redirect("/");
 
-  sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
-      if (err !== null)
-          return res.send(500);
-      console.log(login_url);
-      // res.header.Access-Control-Allow-Origin = 'https://gibdd.control26.ru';
-      return res.redirect(301, login_url);
-  });
+  // sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
+  //     if (err !== null)
+  //         return res.send(500);
+  //     console.log(login_url);
+  //     // res.header.Access-Control-Allow-Origin = 'https://gibdd.control26.ru';
+  //     return res.redirect(301, login_url);
+  // });
 };
 // // Starting point for logout
 exports.singleLogout = function(req, res) {

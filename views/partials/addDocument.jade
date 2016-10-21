@@ -14,10 +14,10 @@
     label(for="category") Категория
     select.form-control(name="category", ng-model="category", ng-required="true", ng-options="c as c.name for c in categories track by c.id")
 .form-group
-    #YMapsID.col-md-8
+    #YMapsID.col-md-10
         ya-map(ya-zoom="17", ya-center="{{map.center}}", ya-before-init="beforeInit()")
             ya-geo-object(ya-source='map.point', ya-options="{draggable:true}", ya-event-dragend="dragEnd($event)")
-    #RightBox.col-md-4
+    #RightBox.col-md-2
         .row
             .col-md-6(style="padding: 2px 2px 2px 2px", ng-repeat="image in form.images" )
                 img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%")

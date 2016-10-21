@@ -56,9 +56,7 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   $scope.filterDocuments = [];
   // заливаем объекты Documents и Cate скоуп
   $scope.documents = Documents.query();
-  // $scope.categories = Categories.query();
   // $scope.url = $location.url();
-  // AuthService.getSession();
   // var user = AuthService.testLogin();
   $log.info($scope.currentUser);
   // вешаем событие на click на карте
@@ -69,20 +67,6 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   // обработка ошибок
   $scope.showErrors = false;
   $scope.errors = [];
-
-  // $scope.doDialog = function(place) {
-  //   var title = 'Confirm';
-  //   var msg = 'Do you really want to delete this place?';
-  //   var btns = [{result:'no', label: 'No'}, {result:'yes', label: 'Yes', cssClass: 'btn-danger'}];
-
-  //   $dialog.messageBox(title, msg, btns)
-  //       .open()
-  //       .then(function(result){
-  //           if (result === 'yes') {
-  //               $scope.delete(place);
-  //           }
-  //       });
-  //   };
   // посчитаем количество страниц
   $scope.numberOfPages=function(){
     return Math.ceil($scope.filterDocuments.length/$scope.pageSize);
@@ -105,7 +89,6 @@ function ReadDocumentCtrl($scope, $location, $routeParams, modalService, Documen
   // var images = new Array(data.images.length);
   // $log.info('массив: ', data.images[1]);
   // $log.info('всего картинок: ', images.length);
-
   $scope.twoCols = false;
   $scope.oneCols = true;
 

@@ -1,23 +1,23 @@
 extends layout
 block body
+  script(type="text/ng-template", id="addComment.html", name="addComment.html")
+    .modal-header
+      h3.modal-title {{modalOptions.headerText}}
+    .modal-body(id="modal-body")
+      textarea.form-control(name="comment.body", ng-model="comment.body", rows="5")
+    .modal-footer
+      button.btn(type="button", ng-click="modalOptions.close()") {{modalOptions.closeButtonText}}
+      button.btn.btn-primary(ng-click="modalOptions.ok(comment.body)") {{modalOptions.actionButtonText}}
+  script(type="text/ng-template", id="showPhoto.html", name="showPhoto.html")
+    .modal-header
+      h3.modal-title {{modalOptions.headerText}}
+    .modal-body(id="modal-body")
+      //- img(src='uploads/_qzco77kxi')
+      img.img-thumbnail(src='{{modalOptions.image}}', style="width: 100%")
+    .modal-footer
+      button.btn(type="button", ng-click="modalOptions.close()") {{modalOptions.closeButtonText}}
+      //- button.btn.btn-primary(ng-click="modalOptions.ok(comment.body)") {{modalOptions.actionButtonText}}
   div.container.workarround
-    script(type="text/ng-template", id="addComment.html", name="addComment.html")
-      .modal-header
-        h3.modal-title {{modalOptions.headerText}}
-      .modal-body(id="modal-body")
-        textarea.form-control(name="comment.body", ng-model="comment.body", rows="5")
-      .modal-footer
-        button.btn(type="button", ng-click="modalOptions.close()") {{modalOptions.closeButtonText}}
-        button.btn.btn-primary(ng-click="modalOptions.ok(comment.body)") {{modalOptions.actionButtonText}}
-    script(type="text/ng-template", id="showPhoto.html", name="showPhoto.html")
-      .modal-header
-        h3.modal-title {{modalOptions.headerText}}
-      .modal-body(id="modal-body")
-        //- img(src='uploads/_qzco77kxi')
-        img.img-thumbnail(src='{{modalOptions.image}}', style="width: 100%")
-      .modal-footer
-        button.btn(type="button", ng-click="modalOptions.close()") {{modalOptions.closeButtonText}}
-        //- button.btn.btn-primary(ng-click="modalOptions.ok(comment.body)") {{modalOptions.actionButtonText}}
     a(href="/")
         img.hd(src='img/hd.jpg', title='на главную страницу')
     <!-- HEADER -->
