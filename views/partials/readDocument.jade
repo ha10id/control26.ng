@@ -12,16 +12,12 @@
 .form-group
     label(for='category') категория:
     input.form-control(readonly="readonly", ng-model='category.name', name='category')
-.form-group(ng-if="twoCols")
-    #YMapsID.col-md-8
+.form-group(ng-if="noImage")
+    #YMapsID.col-md-12
         ya-map(ya-zoom="17", ya-center="{{map.center}}")
             //- ya-map(ya-center="map.center", ya-zoom="map.zoom")
             ya-geo-object(ng-model='map.point', ya-source='map.point')
-    #RightBox.col-md-4
-        .row
-            .col-md-6(style="padding: 2px 2px 2px 2px", ng-repeat="image in document.images" )
-                img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%")
-.form-group(ng-if="oneCols")
+.form-group(ng-if="Image")
     #YMapsID.col-md-10
         ya-map(ya-zoom="17", ya-center="{{map.center}}")
             //- ya-map(ya-center="map.center", ya-zoom="map.zoom")
@@ -29,7 +25,7 @@
     #RightBox.col-md-2
         .row
             .col-md-6(style="padding: 2px 2px 2px 2px", ng-repeat="image in document.images" )
-                img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%")
+                img.img-thumbnail(src="uploads/thumbs/{{image}}", style="width: 100%", ng-click='showImage($index)')
 
 .form-group
     label(for='description') описание:
@@ -37,7 +33,7 @@
 .form-group
     p
         button.btn.btn-primary.form-control(ng-click='closeDocument()') Закрыть
-        button.btn.btn-default.form-control Добавить комментарий
+        button.btn.btn-default.form-control(ng-click='showDialog()') Добавить комментарий
 .form-group
     div(ng-repeat='comment in document._comments')
        p {{comment.comment}}

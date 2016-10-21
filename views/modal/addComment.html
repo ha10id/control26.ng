@@ -1,0 +1,13 @@
+<div class="modal-header" id="modal-header">
+  <h3>{{modalOptions.headerText}}</h3>
+</div>
+<div class="modal-body" id="modal-body">
+  <!-- <p>{{modalOptions.bodyText}}</p> -->
+  <textarea class="form-control" name="comment.body" ng-model="comment.body" rows="5"></textarea>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn"
+          ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>
+  <button class="btn btn-primary"
+          ng-click="modalOptions.ok(comment.body);">{{modalOptions.actionButtonText}}</button>
+</div>

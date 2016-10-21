@@ -42,6 +42,13 @@ body {
     background: #dfe7e7 !important;
     font-weight: normal;
 }
+
+textarea {
+    width: 90%; /* Ширина поля в процентах */
+    height: 200px; /* Высота поля в пикселах */
+    resize: none; /* Запрещаем изменять размер */
+}
+
 .name {
     text-align: center;
     line-height: 7px;

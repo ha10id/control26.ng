@@ -1,8 +1,24 @@
 extends layout
-
 block body
   div.container.workarround
-    a(href="/documents")
+    script(type="text/ng-template", id="addComment.html", name="addComment.html")
+      .modal-header
+        h3.modal-title {{modalOptions.headerText}}
+      .modal-body(id="modal-body")
+        textarea.form-control(name="comment.body", ng-model="comment.body", rows="5")
+      .modal-footer
+        button.btn(type="button", ng-click="modalOptions.close()") {{modalOptions.closeButtonText}}
+        button.btn.btn-primary(ng-click="modalOptions.ok(comment.body)") {{modalOptions.actionButtonText}}
+    script(type="text/ng-template", id="showPhoto.html", name="showPhoto.html")
+      .modal-header
+        h3.modal-title {{modalOptions.headerText}}
+      .modal-body(id="modal-body")
+        //- img(src='uploads/_qzco77kxi')
+        img.img-thumbnail(src='{{modalOptions.image}}', style="width: 100%")
+      .modal-footer
+        button.btn(type="button", ng-click="modalOptions.close()") {{modalOptions.closeButtonText}}
+        //- button.btn.btn-primary(ng-click="modalOptions.ok(comment.body)") {{modalOptions.actionButtonText}}
+    a(href="/")
         img.hd(src='img/hd.jpg', title='на главную страницу')
     <!-- HEADER -->
     // меню навигации
@@ -16,7 +32,7 @@ block body
             span.icon-bar
           // бренд
           a.navbar-brand(href='/') НАРОДНЫЙ КОНТРОЛЬ
-          //-     img(src='icons/38.png')
+            //- img(src='img/26.ico')
         // само меню
         .navbar-collapse.collapse
           ul.nav.navbar-nav.navbar-right
@@ -37,14 +53,13 @@ block body
               a(href='javascript: document.location.href=\'/login\';') вход
     div(ng-view)
     img.hd(src='img/footer.jpg')
-
+  // -------------------- END -----------------------------------------------------------------------------
   script(src='libs/angular/angular.min.js')
   script(src='libs/angular-locale/locale-ru-ru.js')
   script(src='libs/angular-route/angular-route.min.js')
   script(src='libs/angular-resource/angular-resource.min.js')
   script(src='libs/angular-cookies/angular-cookies.min.js')
   script(src='libs/angular-bootstrap/ui-bootstrap-tpls.min.js')
-  //- script(src="libs/angular-bootstrap/ui-bootstrap.min.js")
   script(src='libs/ng-file-upload/ng-file-upload-shim.min.js')
   script(src='libs/ng-file-upload/ng-file-upload.min.js')
   script(src='libs/ya-map/ya-map-2.1.min.js')

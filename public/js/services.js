@@ -20,6 +20,11 @@ angular.module('myApp.services', ['ngResource'])
 		'update': { method:'PUT'}
 	});
 })
+.factory('Comments', function($resource){
+	return $resource('api/comments/:id', null, {
+		'update': { method:'PUT'}
+	});
+})
 .factory('myDocuments', function($resource){
 	return $resource('api/mydocuments/:id', null, {
 		'update': { method:'PUT'}
@@ -34,7 +39,9 @@ angular.module('myApp.services', ['ngResource'])
 	return $resource('api/users/:id', null, {
 		'update': { method:'PUT'}
 	});
-});
+})
+.service('modalService', ['$uibModal', modalService]);
+
 angular.module('auth', ['ngCookies'])
 .service('AuthService', function($cookies, $http, $rootScope) {
 	'use strict';
@@ -128,3 +135,53 @@ angular.module('auth', ['ngCookies'])
 
 	// 	Restangular.all('sessions').remove();
 	// };
+modalService.$inject = ['$uibModal'];
+
+function modalService($uibModal) {
+
+	var modalDefaults = {
+		backdrop: true,
+		keyboard: true,
+		modalFade: true,
+		templateUrl: 'modal/modal.html'
+	};
+
+	var modalOptions = {
+		closeButtonText: 'Отмена',
+		actionButtonText: 'OK',
+		headerText: 'Подтверждение',
+		bodyText: 'Вы уверены?'
+	};
+
+	this.showModal = function (customModalDefaults, customModalOptions) {
+		if (!customModalDefaults){
+			customModalDefaults = {};
+		}
+		customModalDefaults.backdrop = 'static';
+		return this.show(customModalDefaults, customModalOptions);
+	};
+
+	this.show = function (customModalDefaults, customModalOptions) {
+		var tempModalDefaults = {};
+		var tempModalOptions = {};
+
+		angular.extend(tempModalDefaults, modalDefaults, customModalDefaults);
+
+		angular.extend(tempModalOptions, modalOptions, customModalOptions);
+
+		if (!tempModalDefaults.controller) {
+		  	tempModalDefaults.controller = ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+		    	$scope.modalOptions = tempModalOptions;
+		    	$scope.modalOptions.ok = function (result) {
+		    		$uibModalInstance.close(result);
+		    	};
+		    	$scope.modalOptions.close = function (result) {
+		    		$uibModalInstance.dismiss('cancel');
+		    	};
+		  	}]
+
+			tempModalDefaults.controller.$inject = ['$scope', '$uibModalInstance'];
+		}
+		return $uibModal.open(tempModalDefaults).result;
+	};
+};

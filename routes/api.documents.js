@@ -228,19 +228,34 @@ exports.imageUpload = function (req, res, next) {
   // console.log(req.body.document_id);
   var tmp_path = file.path;
   var fileName = ID();
-  var target_path = 'public/uploads/' + fileName;
+  var target_path = 'public/uploads/tmp/' + fileName;
   fs.renameSync(tmp_path, target_path, function(err) {
     if (err) {
       console.error(err.stack);
     }
   });
-    // заделаем тумбочки
-    gm(target_path)
-    .resize(160, 130, "!")
-    .noProfile()
-    .write('public/uploads/thumbs/' + fileName, function(err) {
-      if (err) console.error(err.stack);
-    });
+  // уменьшим картинку
+  gm(target_path)
+  .resize(800, 600, "!")
+  .noProfile()
+  .write('public/uploads/' + fileName, function(err) {
+    if (err) console.error(err.stack);
+  });
+  // заделаем тумбочки
+  gm(target_path)
+  .resize(160, 130, "!")
+  .noProfile()
+  .write('public/uploads/thumbs/' + fileName, function(err) {
+    if (err) {
+      console.error(err.stack);
+    } else {
+      fs.unlinkSync(target_path, (err) => {
+        if (err) throw err;
+        console.log('файл удалён ', target_path);
+      });
+    }
+  });
+
     // ищем текущий документ чтобы записать в него адрес фотки
     Document.findOne({ _id: req.body.document_id }, function(err, d) {
       if (!d) return next(new NotFound('Document not found'));
@@ -287,19 +302,34 @@ exports.imageFakeUpload = function (req, res, next) {
   var tmp_path = file.path;
   // формируем уникальное имя для файла
   var fileName = ID();
-  var target_path = 'public/uploads/' + fileName;
+  var target_path = 'public/uploads/tmp/' + fileName;
   fs.renameSync(tmp_path, target_path, function(err) {
     if (err) {
       console.error(err.stack);
     }
+  });
+  // уменьшим картинку
+  gm(target_path)
+  .resize(800, 600, "!")
+  .noProfile()
+  .write('public/uploads/' + fileName, function(err) {
+    if (err) console.error(err.stack);
   });
   // заделаем тумбочки
   gm(target_path)
   .resize(160, 130, "!")
   .noProfile()
   .write('public/uploads/thumbs/' + fileName, function(err) {
-    if (err) console.error(err.stack);
+    if (err) {
+      console.error(err.stack);
+    } else {
+      fs.unlink(target_path, (err) => {
+        if (err) throw err;
+        console.log('файл удалён ', target_path);
+      });
+    }
   });
+
   console.log("имя файла на запись: ", fileName);
   res.json({fileName});
 };

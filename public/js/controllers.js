@@ -89,11 +89,10 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   };
 }
 // просмотр обращения
-function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories, $log) {
+function ReadDocumentCtrl($scope, $location, $routeParams, modalService, Documents, Categories, Comments, $log) {
   'use strict';
   var data = Documents.get({id: $routeParams.id}, function(){
-    $scope.twoCols = false;
-    $scope.oneCols = true;
+
     $scope.document = data;
     $scope.category =  Categories.get({id: data.category});
     // широта latitude (45) долгота longitude (41)
@@ -103,6 +102,51 @@ function ReadDocumentCtrl($scope, $location, $routeParams, Documents, Categories
       zoom: 17
     };
   });
+  // var images = new Array(data.images.length);
+  // $log.info('массив: ', data.images[1]);
+  // $log.info('всего картинок: ', images.length);
+
+  $scope.twoCols = false;
+  $scope.oneCols = true;
+
+  $scope.showDialog = function () {
+    $log.info('show Dialog');
+    var modalDefaults = {
+      backdrop: true,
+      keyboard: true,
+      modalFade: true,
+      templateUrl: 'addComment.html'
+    }
+    var modalOptions = {
+      closeButtonText: 'Отмена',
+      actionButtonText: 'Отправить',
+      headerText: 'Комментарий'
+    };
+    modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+      console.info(result);
+      //self.$auth.DeleteAccount();
+    });
+  };
+
+  $scope.showImage = function(photoId) {
+    $log.info('show Photo', photoId);
+    var modalDefaults = {
+      backdrop: true,
+      keyboard: true,
+      modalFade: true,
+      templateUrl: 'showPhoto.html'
+    }
+    var modalOptions = {
+      closeButtonText: 'Закрыть',
+      headerText: 'Фотография',
+      image: 'uploads/' + $scope.document.images[photoId]
+    };
+    $log.info('name photo', modalOptions.image);
+    modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+      console.info(result);
+      //self.$auth.DeleteAccount();
+    });
+  };
   // событие кнопки "закрыть"
   $scope.closeDocument = function() {
     history.back();
