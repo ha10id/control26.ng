@@ -197,9 +197,11 @@ exports.edit = function (req, res) {
       document.longitude = req.body.longitude;
       document.latitude = req.body.latitude;
       document.address = req.body.address;
+      document.status = req.body.status;
       // document.name = req.session.user;
-      if (document._creator == req.session.currentUser._id || req.session.isadmin) {
+      if ((document._creator == req.session.currentUser._id) || (req.session.isadmin == true) || (req.session.ismoderator == true)) {
         // сохраняем отредактированный документ
+        console.log(document);
         document.save(function(err) {
           if (err) {
             res.send(false);

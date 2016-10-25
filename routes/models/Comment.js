@@ -10,7 +10,7 @@ var ObjectId = Schema.ObjectId;
         'fans': Number,
         'name': String,
         'datestamp': Date,
-        // _creator: { type: Schema.ObjectId, ref: 'User' },
+        _creator: { type: Schema.ObjectId, ref: 'User' },
         _document: { type: Schema.ObjectId, ref: 'Document' }
     });
 

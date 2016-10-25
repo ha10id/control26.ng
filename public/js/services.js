@@ -50,12 +50,13 @@ angular.module('auth', ['ngCookies'])
 	this.status = {
 		authorized: false,
 		admin: false,
+		moderator: false,
 		token: '',
 		user: {}
 	};
 
 	this.isAuthorized = function() {
-        console.log(self.status);
+        // console.log(self.status);
  		return self.status.authorized;
 
     // self.token=data.token;
@@ -82,13 +83,16 @@ angular.module('auth', ['ngCookies'])
             console.log('---------get server session---------');
          	self.status.authorized 	= data.authorized;
          	self.status.admin 		= data.isadmin;
+         	self.status.moderator 	= data.ismoderator;
          	self.status.user 		= data.currentUser;
 	        $rootScope.isAdmin 		= self.status.admin;
+	        $rootScope.isModerator  = self.status.moderator;
 	        $rootScope.currentUser 	= self.status.user;
 	        $rootScope.isAuthorized = self.status.authorized;
 
-	        console.log('getSession.isAdmin: ', self.status.admin);
-	        console.log('getSession.user: ', self.status.user);
+	        // console.log('getSession.isAdmin: ', self.status.admin);
+	        // console.log('getSession.isModerator: ', self.status.moderator);
+	        // console.log('getSession.user: ', self.status.user);
 			return data;
 		})
 	};

@@ -57,8 +57,9 @@
   var users      = require('./routes/api.users');
   var documents  = require('./routes/api.documents');
   var categories = require('./routes/api.categories');
+  var comments   = require('./routes/api.comments');
   var goverments = require('./routes/api.goverments');
-  var loaduser   = require('./routes/api.auphorize')
+  var loaduser   = require('./routes/api.auphorize');
 
 app.all("/login", function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -97,6 +98,8 @@ app.all("/login", function (req, res, next) {
   app.get('/api/documents/:id', loaduser.loadUser, documents.get);
   app.post('/api/documents', loaduser.loadUser, documents.add);
   app.put('/api/documents/:id', loaduser.loadUser, documents.edit);
+  app.post('/api/comments', loaduser.loadUser, comments.add);
+
   // app.delete('/api/document/:id', documents.delete);
 
   // загрузка изображений на сервер с записью в документ

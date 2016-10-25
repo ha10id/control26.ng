@@ -1,6 +1,7 @@
 .jumborton
   form
-    .form-group(ng-init="iStatus={status:1}")
+    .form-group
+      //-(ng-init="iStatus={status:1}")
       //- #YMapsID.tb-tooltip(title="Создайте новое обращение указав на карте географическое положение (щёлкнуть левой кнопкой 'мыши').")
       #YMapsID
         ya-map(ya-zoom="12", ya-event-click="mapClick($event)")
@@ -78,7 +79,7 @@
     // список обращений
     //- .row
     .form-group(style="margin-top: 5px; overflow-y: scroll; height: 400px")
-        div(ng-repeat='document in filterDocuments | startFrom:currentPage*pageSize | limitTo:pageSize | filter:query')
+        div(ng-repeat='document in filterDocuments | startFrom:currentPage*pageSize | limitTo:pageSize | filter:query | filter:iStatus')
           .panel(ng-class="{ 'panel-success': document.status == 2, 'panel-info': document.status == 1, 'panel-warning': document.status == 0 }")
             .panel-heading
                 strong

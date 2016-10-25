@@ -47,7 +47,7 @@ function LogoutCtrl($rootScope, $http, $location, AuthService, $log) {
 }
 
 // главная страница
-function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Categories, $log) {
+function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, modDocuments, myDocuments, Categories, $log) {
   'use strict';
   AuthService.getSession();
     // подготовим пагинатор
@@ -55,10 +55,31 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   $scope.pageSize = 10;
   $scope.filterDocuments = [];
   // заливаем объекты Documents и Cate скоуп
-  $scope.documents = Documents.query();
+
+  var status = AuthService.getStatus();
+  // $log.info('статус: ', status);
+  // $log.info('пользователь: ', status.user.group);
+  if(status.authorized) {
+    // показывать новые обращения
+    $scope.iStatus = {status: 0};
+    $scope.user = status.user;
+    if (status.user.group == 2) {
+      // список обращений в ЛК модератора
+      $scope.documents = modDocuments.query();
+    } else {
+      // список обращений в ЛК пользователя или администратора
+      $scope.documents = myDocuments.query();
+    };
+  } else {
+    $scope.documents = Documents.query();
+    // показывать обращения в работе
+    $scope.iStatus = {status: 1};
+  };
+
+  $scope.iStatus = {status: 1};
   // $scope.url = $location.url();
   // var user = AuthService.testLogin();
-  $log.info($scope.currentUser);
+  // $log.info($scope.currentUser);
   // вешаем событие на click на карте
   $scope.mapClick = function(e){
     var coords = e.get('coords');
@@ -73,10 +94,10 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, Cate
   };
 }
 // просмотр обращения
-function ReadDocumentCtrl($scope, $location, $routeParams, modalService, Documents, Categories, Comments, $log) {
+function ReadDocumentCtrl($scope, $location, $routeParams, $timeout, AuthService, modalService, Documents, Categories, Comments, $log) {
   'use strict';
+  AuthService.getSession();
   var data = Documents.get({id: $routeParams.id}, function(){
-
     $scope.document = data;
     $scope.category =  Categories.get({id: data.category});
     // широта latitude (45) долгота longitude (41)
@@ -86,14 +107,21 @@ function ReadDocumentCtrl($scope, $location, $routeParams, modalService, Documen
       zoom: 17
     };
   });
+  $scope.showWorkPanel = false;
+
+  if ($scope.isAdmin || $scope.isModerator) {
+    $scope.showWorkPanel = true;
+  };
+  $log.info($scope.isAdmin, $scope.isModerator, $scope.showWorkPanel);
   // var images = new Array(data.images.length);
   // $log.info('массив: ', data.images[1]);
   // $log.info('всего картинок: ', images.length);
   $scope.twoCols = false;
   $scope.oneCols = true;
-
+  //-----------------------------------------------------
+  // показываем диалог комментария
   $scope.showDialog = function () {
-    $log.info('show Dialog');
+    // $log.info('show Dialog');
     var modalDefaults = {
       backdrop: true,
       keyboard: true,
@@ -106,13 +134,43 @@ function ReadDocumentCtrl($scope, $location, $routeParams, modalService, Documen
       headerText: 'Комментарий'
     };
     modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-      console.info(result);
-      //self.$auth.DeleteAccount();
+      // console.info(result);
+      //-----------------------------------------------------
+      var newComment = new Comments();
+      newComment.comment = result;
+      newComment._document = data._id;
+      newComment.$save().then(
+        function (data) {
+          $log.info("комментарий сохранен");
+          // $log.debug(data);
+          $timeout(function() {
+            var data = Documents.get({id: $routeParams.id}, function(){
+              // $log.debug(data);
+              $scope.document = data;
+            });
+          }, 0);
+        },
+        function (err) {
+          // сообщаем об ошибке.
+          $log.warn("++++++++++++++++++++++++++++");
+          switch(err.status) {
+            case 401:
+              $log.info(err);
+              alert('Вы не авторизованы! Зарегистрируйтесь на портале (меню "ВХОД").');
+              break;
+            default:
+              alert(err.statusText);
+          };
+          $history.back();
+        }
+      );
     });
   };
 
+  //-----------------------------------------------------
+  // покажем диалог картинки
   $scope.showImage = function(photoId) {
-    $log.info('show Photo', photoId);
+    // $log.info('show Photo', photoId);
     var modalDefaults = {
       backdrop: true,
       keyboard: true,
@@ -124,14 +182,61 @@ function ReadDocumentCtrl($scope, $location, $routeParams, modalService, Documen
       headerText: 'Фотография',
       image: 'uploads/' + $scope.document.images[photoId]
     };
-    $log.info('name photo', modalOptions.image);
+    // $log.info('name photo', modalOptions.image);
     modalService.showModal(modalDefaults, modalOptions).then(function (result) {
       console.info(result);
       //self.$auth.DeleteAccount();
     });
   };
-  // событие кнопки "закрыть"
+
+  // закрыть документ
   $scope.closeDocument = function() {
+    $scope.document.status = 2;
+    $scope.updateDocument();
+  };
+
+  // отменить закрытие
+  $scope.uncloseDocument = function() {
+    $scope.document.status = 1;
+    $scope.updateDocument();
+  };
+
+  // принять в работу
+  $scope.commitDocument = function() {
+    $scope.document.status = 1;
+    $scope.updateDocument();
+  };
+
+
+  $scope.updateDocument = function() {
+    Documents.update({id: $routeParams.id}, $scope.document,
+      function (data) {
+        $log.info("обращение сохранено");
+        // $log.debug(data);
+        // $location.url('/');
+      },
+      function (err) {
+        // сообщаем об ошибке.
+        $log.warn("++++++++++++++++++++++++++++");
+        switch(err.status) {
+          case 401:
+            $log.info(err);
+            alert('Вы не авторизованы! Зарегистрируйтесь на портале (меню "ВХОД").');
+            break;
+          case 403:
+            $log.info(err);
+            alert('Не достаточно прав.');
+            break;
+          default:
+            alert(err.statusText);
+        };
+      }
+    );
+    history.back();
+  };
+  // }
+  // событие кнопки "закрыть"
+  $scope.closeWindow = function() {
     history.back();
   };
 }
@@ -180,6 +285,7 @@ function EditDocumentCtrl($scope, $location, $routeParams, AuthService, Document
       zoom: 17
     };
   });
+  // $scope.addComment = function()
   // загрузка фоток
   $scope.uploadFiles = function(file, errFiles) {
     $scope.form.file = file;
@@ -385,8 +491,8 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, AuthService, m
   // api сам решает какие документы нам отдать
   // $log.info($rootScope.currentUser);
   var status = AuthService.getStatus();
-  $log.info('статус: ', status);
-  $log.info('пользователь: ', status.user.group);
+  // $log.info('статус: ', status);
+  // $log.info('пользователь: ', status.user.group);
   if(status.authorized) {
     $scope.user = status.user;
   };
@@ -404,7 +510,7 @@ function PersonalAreaCtrl($scope, $http, $location, $routeParams, AuthService, m
   $scope.categories = Categories.query();
 
   // показывать обращения в работе
-  $scope.iStatus = {status: 1};
+  $scope.iStatus = {status: 0};
   // $scope.user = currentUser();
   // посчитаем количество страниц
   $scope.numberOfPages=function(){

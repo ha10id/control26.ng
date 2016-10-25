@@ -31,21 +31,23 @@
 .form-group
     label(for='description') описание:
     textarea.form-control(readonly="readonly", rows='5') {{document.description}}
-.form-group(ng-if='isAdmin')
+.form-group(ng-if='showWorkPanel')
     .form-group
       .btn-group.btn-group-justified
         .btn-group
-          button.btn.btn-success Закрыть обращение
+          button.btn.btn-success(ng-if="document.status == 0", ng-click='commitDocument()') Принять в работу
+          button.btn.btn-success(ng-if="document.status == 1", ng-click='closeDocument()') Закрыть обращение
+          button.btn.btn-success(ng-if="document.status == 2", ng-click='uncloseDocument()') Отменить закрытие
+        //- .btn-group
+        //-   button.btn.btn-danger(ng-disabled="document.status > 1") Отклонить обращение
         .btn-group
-          button.btn.btn-danger Отклонить обращение
-        .btn-group
-          button.btn.btn-primary(ng-click='closeDocument()') Выйти
-.form-group(ng-if='!isAdmin')
+          button.btn.btn-primary(ng-click='closeWindow()') Выйти
+.form-group(ng-if='!showWorkPanel')
     p
-        button.btn.btn-primary.form-control(ng-click='closeDocument()') Закрыть
+        button.btn.btn-primary.form-control(ng-click='closeWindow()') Закрыть
 .form-group
     p
-        button.btn.btn-default.form-control(ng-click='showDialog()') Добавить комментарий
+        button.btn.btn-default.form-control(ng-disabled="document.status > 1", ng-click='showDialog()') Добавить комментарий
 .form-group
     div(ng-repeat='comment in document._comments')
        p {{comment.comment}}
