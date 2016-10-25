@@ -59,18 +59,18 @@ exports.login = function(req, res) {
   //   middleName: "Петрович",
   //   lastName: "Силин"
   // };
-  req.session.isadmin = false;
-  req.session.ismoderator = false;
-  // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
-  if (user.group === 3 ) {
-    req.session.isadmin = true;
-  }
-  if (user.group === 2 ) {
-    req.session.ismoderator = true;
-  }
-  req.session.currentUser = user;
-  req.session.authorized = true;
-  res.redirect("/");
+  // req.session.isadmin = false;
+  // req.session.ismoderator = false;
+  // // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
+  // if (user.group === 3 ) {
+  //   req.session.isadmin = true;
+  // }
+  // if (user.group === 2 ) {
+  //   req.session.ismoderator = true;
+  // }
+  // req.session.currentUser = user;
+  // req.session.authorized = true;
+  // res.redirect("/");
 
   sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
       if (err !== null)
