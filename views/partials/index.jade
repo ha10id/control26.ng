@@ -3,33 +3,35 @@
     .form-group
       //-(ng-init="iStatus={status:1}")
       //- #YMapsID.tb-tooltip(title="Создайте новое обращение указав на карте географическое положение (щёлкнуть левой кнопкой 'мыши').")
-      #YMapsID
+      #YMapsID.col-md-10(style="height: 350px")
         ya-map(ya-zoom="12", ya-event-click="mapClick($event)")
           ya-cluster
             ya-geo-object(ng-repeat="document in filterDocuments =(documents | filter:query | filter:iStatus) | startFrom:currentPage*pageSize | limitTo:pageSize", ya-source='document.geoObject')
-      //- #RightBox.col-md-4
-      //-   .row
-      //-     .col-md-8(style="height: 300px")
-      //-       div(style="display:inline-block; min-height:290px;")
-      //-         uib-datepicker(ng-model="dt", min-date="minDate", show-weeks="true", class="well well-sm")
-      //-     .col-md-4
-      //-         img.banner(src="/img/grad.png", style="margin-top: 40px;")
-      //-   .row
-      //-       .col-md-6
-      //-           a(href="http://stavregion.ru/")
-      //-               img.banner(src="/img/stavregion.png")
-      //-       .col-md-6
-      //-           a(href="http://gosuslugi.ru/")
-      //-               img.banner(src="/img/1458628577.jpg")
-      //-   .row
-      //-       .col-md-6
-      //-           a(href="http://26gosuslugi.ru/")
-      //-               img.banner(src="/img/26gosuslugi.jpg")
-      //-       .col-md-6
-      //-           a(href="http://umfc26.ru/")
-      //-               img.banner(src="/img/mfc.png")
+      #RightBox.col-md-2
+        //-   .row
+        //-     .col-md-8(style="height: 300px")
+        //-       div(style="display:inline-block; min-height:290px;")
+        //-         uib-datepicker(ng-model="dt", min-date="minDate", show-weeks="true", class="well well-sm")
+        //-     .col-md-4
+        //-         img.banner(src="/img/grad.png", style="margin-top: 40px;")
+        .row
+            //- .col-md-6
+            a(href="http://stavregion.ru/")
+                img.banner(src="/img/stavregion.png")
+            //- .col-md-6
+            a(href="http://gosuslugi.ru/")
+                img.banner(src="/img/1458628577.jpg")
+            //- .row
+            //-     .col-md-6
+            a(href="http://26gosuslugi.ru/")
+                img.banner(src="/img/26gosuslugi.png")
+            //-     .col-md-6
+            a(href="http://umfc26.ru/")
+                img.banner(src="/img/mfc.png")
+            a(href="http://gibdd.control26.ru/")
+                img.banner(src="/img/gibdd.jpg")
       //- .row(style="background-color: #CCCCCC; font-color: #000")
-    //- .row
+    .row
     // фильтр
     .form-group(style="background-color: #F7F1D9; font-color: #000")
       ul.nav.nav-pills

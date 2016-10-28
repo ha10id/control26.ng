@@ -5,10 +5,10 @@ var User 	= require('./models/User.js');
 //========================================================
 // Create service provider
 var sp_options = {
-        entity_id: "https://gibdd.control26.ru",
+        entity_id: "https://test.control26.ru",
         private_key: fs.readFileSync("ssl/server.key").toString(),
         certificate: fs.readFileSync("ssl/server.crt").toString(),
-        assert_endpoint: "https://gibdd.control26.ru/assert",
+        assert_endpoint: "https://test.control26.ru/assert",
         force_authn: true,
         sign_get_request: true,
         allow_unencrypted_assertion: false
@@ -20,9 +20,9 @@ var sp = new saml2.ServiceProvider(sp_options);
 var metadata = sp.create_metadata();
 // Create identity provider
 var idp_options = {
-    sso_login_url: "https://esia-portal1.test.gosuslugi.ru/idp/profile/SAML2/Redirect/SSO",
-    sso_logout_url: "https://esia-portal1.test.gosuslugi.ru/idp/profile/SAML2/Redirect/SLO",
-    certificates: [fs.readFileSync("ssl/esia-test.crt").toString()]
+    sso_login_url: "https://esia.gosuslugi.ru/idp/profile/SAML2/Redirect/SSO",
+    sso_logout_url: "https://esia.gosuslugi.ru/idp/profile/SAML2/Redirect/SLO",
+    certificates: [fs.readFileSync("ssl/esia.crt").toString()]
 };
 
 var idp = new saml2.IdentityProvider(idp_options);

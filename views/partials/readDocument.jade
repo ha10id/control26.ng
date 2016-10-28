@@ -50,4 +50,5 @@
         button.btn.btn-default.form-control(ng-disabled="document.status > 1", ng-click='showDialog()') Добавить комментарий
 .form-group
     div(ng-repeat='comment in document._comments')
-       p {{comment.comment}}
+        h5 {{comment.datestamp | date}}
+        h4 {{comment.comment}}
