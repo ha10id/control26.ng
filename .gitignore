@@ -3,3 +3,4 @@ converter
 node_modules
 public/libs
 ssl
+metadata.xml
