@@ -2,5 +2,6 @@ base
 converter
 node_modules
 public/libs
+public/uploads
 ssl
 metadata.xml
