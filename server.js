@@ -77,7 +77,7 @@ app.all("/login", function (req, res, next) {
   app.get('/login', login.login);
   app.get('/logout', login.logout);
   app.get('/SingleLogout', login.singleLogout);
-  app.get('/SingleLogoutResponse?', login.singleLogoutResponse);
+  app.get('/SingleLogoutResponse', login.singleLogoutResponse);
   app.get('/metadata.xml', login.getMetadata);
   app.post('/assert', login.assert);
   // пользователи
