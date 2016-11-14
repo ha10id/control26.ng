@@ -33,6 +33,7 @@ exports.list = function (req, res) {
         description: data.description,
         status: data.status,
         astatus: data.istatus,
+        category: data.category,
         datestamp: data.datestamp,
         geoObject: data.geoObject
       };

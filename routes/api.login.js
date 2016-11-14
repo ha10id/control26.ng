@@ -2,13 +2,14 @@
 var fs 		= require('fs');
 var saml2 	= require('saml2-js');
 var User 	= require('./models/User.js');
+var env = process.env.NODE_ENV || 'development';
 //========================================================
 // Create service provider
 var sp_options = {
-        entity_id: "https://test.control26.ru",
+        entity_id: "https://control26.ru",
         private_key: fs.readFileSync("ssl/server.key").toString(),
         certificate: fs.readFileSync("ssl/server.crt").toString(),
-        assert_endpoint: "https://test.control26.ru/assert",
+        assert_endpoint: "https://control26.ru/assert",
         force_authn: true,
         sign_get_request: true,
         allow_unencrypted_assertion: false
@@ -47,41 +48,51 @@ exports.login = function(req, res) {
   console.log('---     login on server             ---');
   console.log('---------------------------------------');
   console.log(res.rawHeaders);
+  // development only
 
-  // var user = {
-  //   // _id: "57d26e026e4edc261c01573d",
-  //   _id: "58049b9f4c5c5a08dfd58510",
-  //   // _id: "57a98bfc9204b1760f00005f",
-  //   group: 1,
-  //   email: "achiduzu@gmail.com",
-  //   name: "Сигизмунд Петрович Силин",
-  //   firstName: "Сигизмунд",
-  //   middleName: "Петрович",
-  //   lastName: "Силин"
-  // };
-  // req.session.isadmin = false;
-  // req.session.ismoderator = false;
-  // // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
-  // if (user.group === 3 ) {
-  //   req.session.isadmin = true;
-  // }
-  // if (user.group === 2 ) {
-  //   req.session.ismoderator = true;
-  // }
-  // req.session.currentUser = user;
-  // req.session.authorized = true;
-  // res.redirect("/");
-
-  sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
-      if (err !== null)
-          return res.send(500);
-      console.log(login_url);
-      // res.header.Access-Control-Allow-Origin = 'https://gibdd.control26.ru';
-      return res.redirect(301, login_url);
-  });
+  if (env === 'development') {
+    var user = {
+      // _id: "57d26e026e4edc261c01573d",
+      _id: "58049b9f4c5c5a08dfd58510",
+      // _id: "57a98bfc9204b1760f00005f",
+      group: 3,
+      email: "achiduzu@gmail.com",
+      name: "Сигизмунд Петрович Силин",
+      firstName: "Сигизмунд",
+      middleName: "Петрович",
+      lastName: "Силин"
+    };
+    req.session.isadmin = false;
+    req.session.ismoderator = false;
+    // req.session.id = "klj657675kjbnk45b67v5h3c5f353c6g346b5h3";
+    if (user.group === 3 ) {
+      req.session.isadmin = true;
+    }
+    if (user.group === 2 ) {
+      req.session.ismoderator = true;
+    }
+    req.session.currentUser = user;
+    req.session.authorized = true;
+    res.redirect("/");
+  }
+  // production only
+  if (env === 'production') {
+    sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
+        if (err !== null)
+            return res.send(500);
+        console.log(login_url);
+        // res.header.Access-Control-Allow-Origin = 'https://gibdd.control26.ru';
+        return res.redirect(301, login_url);
+    });
+  }
 };
 // // Starting point for logout
 exports.singleLogout = function(req, res) {
+  if (env === 'development') {
+    req.session.destroy();
+    res.redirect('/');
+  };
+  if (env === 'production') {
     var options = {
         name_id: req.session.name_id,
         session_index: req.session.index
@@ -92,6 +103,7 @@ exports.singleLogout = function(req, res) {
             return res.send(500);
         res.redirect(logout_url);
     });
+  };
 };
 
 exports.singleLogoutResponse = function(req, res) {

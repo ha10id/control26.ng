@@ -1,0 +1,33 @@
+.jumborton
+    //- .form-control
+    form.form-filter(ng-if='!FilterIsSet')
+        .col-md-2
+        .col-md-8
+            h3(style="text-align: center") Выберите период для формирования отчёта:
+            .row
+                .col-md-6
+                    p.input-group
+                        input.form-control(type="text", uib-datepicker-popup="{{format}}", ng-model="dtStart", is-open="popup1.opened", datepicker-options="dateOptions", ng-required="true", close-text="Close", alt-input-formats="altInputFormats")
+                        span.input-group-btn
+                            button(type="button", class="btn btn-default", ng-click="open1()")
+                                i.glyphicon.glyphicon-calendar
+                .col-md-6
+                    p.input-group
+                        input(type="text", class="form-control", uib-datepicker-popup="{{format}}", ng-model="dtEnd", is-open="popup2.opened", datepicker-options="dateOptions", ng-required="true", close-text="Close", alt-input-formats="altInputFormats")
+                        span.input-group-btn
+                            button(type="button", class="btn btn-default", ng-click="open2()")
+                                i.glyphicon.glyphicon-calendar
+            //- tt {{dtStart}} - {{dtEnd}}
+            button.btn.btn-primary.form-control(ng-click='generate(dtStart,dtEnd)') Сформировать
+        .col-md-2
+        .row(style="height: 200px;")
+    form.form-table(ng-if='FilterIsSet')
+        div(ui-i18n="ru")
+            h3(style="text-align: center") Статистика по жалобам граждан с {{dtStart|date}} по {{dtEnd|date}}
+            h5(style="text-align: center") 1. По категориям:
+            .myGrid(ui-grid="gridOptions", ui-grid-auto-resize, ui-grid-exporter)
+            //- .myGrid(ui-grid="gridOptions", ui-grid-exporter)
+            //-style="height: 170px;")
+            //-, style="height: 400px;")
+            //- h5(style="text-align: center") 2. По принадлежности заявителя
+            //- .myGrid(ui-grid="{ data: myData1 }", style="height: 300px;")

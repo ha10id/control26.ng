@@ -46,15 +46,103 @@ function LogoutCtrl($rootScope, $http, $location, AuthService, $log) {
   // history.back();
 }
 
+function StatisticsCtrl($scope, $http, $location, $timeout, AuthService, $log) {
+  'use strict';
+  $log.info('statistics controller');
+  $scope.FilterIsSet = false;
+  $scope.dtStart = new Date();
+  $scope.dtStart.setHours(0,0,0,0);
+  $scope.dtEnd = new Date();
+  $scope.dtEnd.setHours(23,59,59,999);
+
+  $scope.open1 = function() {
+    $scope.popup1.opened = true;
+  };
+
+  $scope.open2 = function() {
+    $scope.popup2.opened = true;
+  };
+
+  $scope.popup1 = {
+    opened: false
+  };
+
+  $scope.popup2 = {
+    opened: false
+  };
+
+  $scope.generate = function(dtStart, dtEnd) {
+    $scope.dtStart = dtStart;
+    $scope.dtEnd = dtEnd;
+    $scope.gridOptions = {
+      exporterMenuCsv: false,
+      columnDefs: [
+        { field: 'категория', width: '60%' },
+        { field: 'новых', width: '10%' },
+        { field: 'в работе', width: '10%' },
+        { field: 'завершено', width: '10%' },
+        { field: 'всего', width: '10%' }
+      ],
+      enableColumnResize: true,
+      enableGridMenu: true,
+      // enableSelectAll: true,
+      exporterCsvFilename: 'myFile.csv',
+      exporterMenuSelectedData: false,
+      exporterMenuVisibleData: false,
+      exporterPdfDefaultStyle: {fontSize: 9},
+      exporterPdfTableStyle: {margin: [10, 10, 10, 10]},
+      exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'blue'},
+      exporterPdfHeader: { text: "Статистика по категориям.", style: 'headerStyle' },
+      exporterPdfFooter: function ( currentPage, pageCount ) {
+        return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+      },
+      exporterPdfCustomFormatter: function ( docDefinition ) {
+        docDefinition.styles.headerStyle = { fontSize: 22, bold: true, alignment: 'center' };
+        docDefinition.styles.footerStyle = { fontSize: 10, bold: true, alignment: 'center' };
+        docDefinition.content.columns = [
+        {width: '*', text: 'категория'},
+        {width: '100', text: 'новых'},
+        {width: '100', text: 'в работе'},
+        {width: '100', text: 'завершено'},
+        {width: '100', text: 'всего'}
+      ];
+        return docDefinition;
+      },
+      exporterPdfOrientation: 'portrait',
+      exporterPdfPageSize: 'A4',
+      exporterPdfMaxGridWidth: 450,
+      exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+      onRegisterApi: function(gridApi){
+        $scope.gridApi = gridApi;
+      }
+    };
+    $log.info('начало: ',dtStart,' конец: ',dtEnd);
+    $scope.FilterIsSet = true;
+    $http.get('api/statistics/' + dtStart +',' +dtEnd).
+    success(function(status) {
+      $timeout(function() {
+        $http.get('/api/getstat').
+        success(function(data) {
+          if(data) {
+            $scope.gridOptions.data = data;
+          };
+        });
+      }, 2000);
+    });
+  };
+  // history.back();
+}
+
 // главная страница
 function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, modDocuments, myDocuments, Categories, $log) {
   'use strict';
   AuthService.getSession();
-    // подготовим пагинатор
+  // подготовим пагинатор
   $scope.currentPage = 0;
   $scope.pageSize = 10;
   $scope.filterDocuments = [];
   // заливаем объекты Documents и Cate скоуп
+  $scope.iCategory = {};
 
   var status = AuthService.getStatus();
   // $log.info('статус: ', status);
@@ -68,7 +156,7 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, modD
       $scope.documents = modDocuments.query();
     } else {
       // список обращений в ЛК пользователя или администратора
-      $scope.documents = myDocuments.query();
+      $scope.documents = Documents.query();
     };
   } else {
     $scope.documents = Documents.query();
@@ -77,6 +165,7 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, modD
   };
 
   $scope.iStatus = {status: 1};
+  $scope.categories = Categories.query();
   // $scope.url = $location.url();
   // var user = AuthService.testLogin();
   // $log.info($scope.currentUser);
@@ -85,7 +174,14 @@ function IndexCtrl($scope, $location, $routeParams, AuthService, Documents, modD
     var coords = e.get('coords');
     $location.url('/addDocument/' + coords);
   };
-  // обработка ошибок
+  $scope.changeCategory = function(name){
+    $scope.iCategory = name;
+    $log.info(name);
+  }
+  $scope.changeStatus = function(name){
+    $scope.iStatus = name;
+    $log.info(name);
+  }  // обработка ошибок
   $scope.showErrors = false;
   $scope.errors = [];
   // посчитаем количество страниц

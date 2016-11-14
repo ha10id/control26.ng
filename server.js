@@ -46,6 +46,7 @@
 // development only
   if (env === 'development') {
     app.use(errorHandler());
+    app.set('port', process.env.PORT || 2000);
   }
 // production only
   if (env === 'production') {
@@ -60,6 +61,7 @@
   var comments   = require('./routes/api.comments');
   var goverments = require('./routes/api.goverments');
   var loaduser   = require('./routes/api.auphorize');
+  var statistics = require('./routes/api.statistics');
 
 app.all("/login", function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -99,7 +101,9 @@ app.all("/login", function (req, res, next) {
   app.post('/api/documents', loaduser.loadUser, documents.add);
   app.put('/api/documents/:id', loaduser.loadUser, documents.edit);
   app.post('/api/comments', loaduser.loadUser, comments.add);
-
+  // статистика
+  app.get('/api/statistics/:sdt,:edt', loaduser.loadUser, statistics.listByCategory);
+  app.get('/api/getstat', statistics.listGet);
   // app.delete('/api/document/:id', documents.delete);
 
   // загрузка изображений на сервер с записью в документ

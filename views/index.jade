@@ -39,10 +39,12 @@ block body
             li
               a(href='/') главная
             li(ng-if='isAuthorized')
-              a(href='/personalArea') {{currentUser.name}}
+              a(href='/personalArea') личный кабинет
                 //- div.name
                 //-   p {{currentUser.name}}
                 //-   span.label.label-info личный кабинет
+            li(ng-if='isAdmin')
+              a(href='/statistics') статистика
             li(ng-if='isAdmin')
               a(href='/adminPanel') администрирование
             li(ng-if='isAuthorized')
@@ -62,7 +64,10 @@ block body
   script(src='libs/angular-bootstrap/ui-bootstrap-tpls.min.js')
   script(src='libs/ng-file-upload/ng-file-upload-shim.min.js')
   script(src='libs/ng-file-upload/ng-file-upload.min.js')
+  script(src='libs/angular-ui-grid/ui-grid.min.js')
   script(src='libs/ya-map/ya-map-2.1.min.js')
+  script(src='libs/pdfmake/build/pdfmake.js')
+  script(src='libs/pdfmake/build/vfs_fonts.js')
   script(src='js/app.js')
   script(src='js/services.js')
   script(src='js/controllers.js')

@@ -1,54 +1,32 @@
-/* app css stylesheet */
-/*
-@import url(https://fonts.googleapis.com/css?family=Rajdhani|Roboto);
-
-@font-family-base {
-  font-family:'Rajdhani',sans-serif;
+/* font-family: "CenturyGothicRegular"; */
+@font-face {
+    font-family: "CenturyGothicRegular";
+    src: url("../fonts/CenturyGothicRegular/CenturyGothicRegular.eot");
+    src: url("../fonts/CenturyGothicRegular/CenturyGothicRegular.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/CenturyGothicRegular/CenturyGothicRegular.woff") format("woff"),
+    url("../fonts/CenturyGothicRegular/CenturyGothicRegular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
 }
-*/
-/*************************************************
-general fonts
-*************************************************/
-/*
-.rajdhani_300{font-family:'Rajdhani',sans-serif;font-weight:300}
-.rajdhani_500{font-family:'Rajdhani',sans-serif;font-weight:500}
-.rajdhani_700{font-family:'Rajdhani',sans-serif;font-weight:700}
-*/
-/*
-@font-family-sans-serif: Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
-@brand-success: #83A310;
-@brand-primary: #82A7CA;
-@color-blue-dark: #0171BB;
-@color-gray: #F5F5F5;
-
-html,body {
-  width:100%;
-  margin:0;
-  padding:0;
-  font-family:'Rajdhani', sans-serif;
+.class {
+  font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
 }
-*/
-
-
 * {
   padding: 0;
   margin: 0;
 }
-
 body {
-    font-family: 'Exo 2', sans-serif;
+    font-family: 'CenturyGothicRegular', sans-serif;
     font-size: 12px;
     color: #868585;
     background: #dfe7e7 !important;
     font-weight: normal;
 }
-
 textarea {
     width: 90%; /* Ширина поля в процентах */
     height: 200px; /* Высота поля в пикселах */
     resize: none; /* Запрещаем изменять размер */
 }
-
 .name {
     text-align: center;
     line-height: 7px;
@@ -106,6 +84,8 @@ yandex-map {
   padding: 0 !important;
 }
 #RightBox {
+  /*max-width: 243px;*/
+  max-height: 360px;
   height: 360px;
   background-color: lightgray;
 }
@@ -121,7 +101,9 @@ img.hd {
 }
 
 img.banner {
-    max-width: 100%;
+    width: 100%;
+    max-height: 77px;
+    margin-bottom: 2px;
 }
 
 /* Пример оформления фотографии */

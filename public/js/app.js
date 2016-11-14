@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['auth', 'ngRoute', 'yaMap', 'ui.bootstrap', 'ngFileUpload', 'myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.components']).
+angular.module('myApp', ['auth', 'ngRoute', 'yaMap', 'ui.bootstrap', 'ui.grid', 'ui.grid.exporter', 'ngFileUpload', 'myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.components']).
 run(function($rootScope, AuthService) {
     console.log("app run");
     var session = AuthService.getSession();
@@ -44,6 +44,10 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
   when('/personalArea', {
     templateUrl: 'partials/personalArea',
     controller: PersonalAreaCtrl
+  }).
+  when('/statistics', {
+    templateUrl: 'partials/statistics',
+    controller: StatisticsCtrl
   }).
   when('/adminPanel', {
     templateUrl: 'partials/adminPanel',
