@@ -1,7 +1,7 @@
 function LoginCtrl($rootScope, $http, AuthService, $location, $log) {
   'use strict';
   $log.info('login controller');
-  // var url = "https://gibdd.control26.ru/login";
+  // var url = "/login";
   // $http({
   //   method: 'GET',
   //   dataType: 'jsonp',

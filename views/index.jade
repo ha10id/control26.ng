@@ -49,7 +49,7 @@ block body
               a(href='/adminPanel') администрирование
             li(ng-if='isAuthorized')
               //- a(href="/logout") выход
-              a(href='javascript: document.location.href=\'/SingleLogout\';') выход
+              a(href='javascript: document.location.href=\'/logout\';') выход
             li(ng-if='!isAuthorized')
               //- a(href="/login") вход
               a(href='javascript: document.location.href=\'/login\';') вход

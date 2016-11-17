@@ -31,8 +31,9 @@
   app.use(session({ resave: true,
                   saveUninitialized: true,
                   secret: 'dsvTjvhFYhbCFDzxFBN',
-                  cookie: {maxAge: 3600000}
+                  cookie: {maxAge: 100000}
                 }));  // maxAge = hour
+
   app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
   app.use(morgan('dev'));                                         // log every request to the console
   app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
@@ -63,12 +64,15 @@
   var loaduser   = require('./routes/api.auphorize');
   var statistics = require('./routes/api.statistics');
 
-app.all("/login", function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
-    return next();
-});
+// app.all("*", function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");
+//     res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+//     // res.header('Cache-Control: no-store, no-cache, must-revalidate');
+//     // res.header('Cache-Control: post-check=0, pre-check=0', false);
+//     // res.header('Pragma: no-cache');
+//     return next();
+// });
 
 // Routes ==================================================
   app.get('/', routes.index);

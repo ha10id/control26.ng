@@ -38,19 +38,30 @@ exports.logout = function(req, res) {
   console.log('---------------------------------------');
   console.log('---     logout from server          ---');
   console.log('---------------------------------------');
-  req.session.destroy();
-  res.redirect(301, "/");
+  if (env === 'production') {
+    var options = {
+        name_id: req.session.name_id,
+        session_index: req.session.index
+    };
+    sp.create_logout_request_url(idp, options, function(err, logout_url) {
+      if (err !== null)
+          return res.send(500);
+      res.redirect(logout_url);
+    });
+  };
+  // req.session.destroy();
+  // res.redirect(301, "/");
 };
 
 // Starting point for login
 exports.login = function(req, res) {
-  console.log('---------------------------------------');
-  console.log('---     login on server             ---');
-  console.log('---------------------------------------');
-  console.log(res.rawHeaders);
   // development only
-
   if (env === 'development') {
+    console.log('---------------------------------------');
+    console.log('---     login on server             ---');
+    console.log('---------------------------------------');
+    console.log(res.rawHeaders);
+
     var user = {
       // _id: "57d26e026e4edc261c01573d",
       _id: "58049b9f4c5c5a08dfd58510",
@@ -78,32 +89,19 @@ exports.login = function(req, res) {
   // production only
   if (env === 'production') {
     sp.create_login_request_url(idp, {}, function(err, login_url, request_id) {
-        if (err !== null)
-            return res.send(500);
-        console.log(login_url);
-        // res.header.Access-Control-Allow-Origin = 'https://gibdd.control26.ru';
-        return res.redirect(301, login_url);
+      if (err !== null)
+          return res.send(500);
+      console.log(login_url);
+      return res.redirect(301, login_url);
+
     });
   }
 };
 // // Starting point for logout
 exports.singleLogout = function(req, res) {
-  if (env === 'development') {
+    console.log('-------singleLogout');
     req.session.destroy();
-    res.redirect('/');
-  };
-  if (env === 'production') {
-    var options = {
-        name_id: req.session.name_id,
-        session_index: req.session.index
-    };
-    // console.dir(options);
-    sp.create_logout_request_url(idp, options, function(err, logout_url) {
-        if (err !== null)
-            return res.send(500);
-        res.redirect(logout_url);
-    });
-  };
+    res.redirect('home');
 };
 
 exports.singleLogoutResponse = function(req, res) {
